@@ -1,0 +1,210 @@
+[2023-08-25T14:19:51.164] [INFO] response - {
+  ip: '::ffff:127.0.0.1',
+  method: 'POST',
+  url: '/api/articleList',
+  body: {},
+  user: {
+    userinfo: {
+      id: 4,
+      username: 'admin',
+      password: '',
+      avatar: null,
+      status: 1,
+      rid: 0
+    },
+    iat: 1692944092,
+    exp: 1693030492
+  },
+  costTime: 36,
+  authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyaW5mbyI6eyJpZCI6NCwidXNlcm5hbWUiOiJhZG1pbiIsInBhc3N3b3JkIjoiIiwiYXZhdGFyIjpudWxsLCJzdGF0dXMiOjEsInJpZCI6MH0sImlhdCI6MTY5Mjk0NDA5MiwiZXhwIjoxNjkzMDMwNDkyfQ.3DxZ8gjgXoBu4-sKv-u0GmV6ELOMJVuu8Zd3E3EcreA',
+  response: { status: 200, message: 'OK' }
+}
+[2023-08-25T14:20:48.253] [INFO] response - {
+  ip: '::ffff:127.0.0.1',
+  method: 'POST',
+  url: '/api/articleList',
+  body: {},
+  user: {
+    userinfo: {
+      id: 4,
+      username: 'admin',
+      password: '',
+      avatar: null,
+      status: 1,
+      rid: 0
+    },
+    iat: 1692944092,
+    exp: 1693030492
+  },
+  costTime: 39,
+  authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyaW5mbyI6eyJpZCI6NCwidXNlcm5hbWUiOiJhZG1pbiIsInBhc3N3b3JkIjoiIiwiYXZhdGFyIjpudWxsLCJzdGF0dXMiOjEsInJpZCI6MH0sImlhdCI6MTY5Mjk0NDA5MiwiZXhwIjoxNjkzMDMwNDkyfQ.3DxZ8gjgXoBu4-sKv-u0GmV6ELOMJVuu8Zd3E3EcreA',
+  response: { status: 200, message: 'OK' }
+}
+[2023-08-25T14:29:46.254] [INFO] response - {
+  ip: '::ffff:127.0.0.1',
+  method: 'POST',
+  url: '/api/articleList',
+  body: {},
+  user: {
+    userinfo: {
+      id: 4,
+      username: 'admin',
+      password: '',
+      avatar: null,
+      status: 1,
+      rid: 0
+    },
+    iat: 1692944092,
+    exp: 1693030492
+  },
+  costTime: 29,
+  authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyaW5mbyI6eyJpZCI6NCwidXNlcm5hbWUiOiJhZG1pbiIsInBhc3N3b3JkIjoiIiwiYXZhdGFyIjpudWxsLCJzdGF0dXMiOjEsInJpZCI6MH0sImlhdCI6MTY5Mjk0NDA5MiwiZXhwIjoxNjkzMDMwNDkyfQ.3DxZ8gjgXoBu4-sKv-u0GmV6ELOMJVuu8Zd3E3EcreA',
+  response: { status: 200, message: 'OK' }
+}
+[2023-08-25T14:31:02.959] [INFO] response - {
+  ip: '::ffff:127.0.0.1',
+  method: 'POST',
+  url: '/api/articleList',
+  body: { title: '' },
+  user: {
+    userinfo: {
+      id: 4,
+      username: 'admin',
+      password: '',
+      avatar: null,
+      status: 1,
+      rid: 0
+    },
+    iat: 1692944092,
+    exp: 1693030492
+  },
+  costTime: 60,
+  authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyaW5mbyI6eyJpZCI6NCwidXNlcm5hbWUiOiJhZG1pbiIsInBhc3N3b3JkIjoiIiwiYXZhdGFyIjpudWxsLCJzdGF0dXMiOjEsInJpZCI6MH0sImlhdCI6MTY5Mjk0NDA5MiwiZXhwIjoxNjkzMDMwNDkyfQ.3DxZ8gjgXoBu4-sKv-u0GmV6ELOMJVuu8Zd3E3EcreA',
+  response: { status: 200, message: 'OK' }
+}
+[2023-08-25T14:31:08.381] [INFO] response - {
+  ip: '::ffff:127.0.0.1',
+  method: 'POST',
+  url: '/api/articleList',
+  body: {
+    title: '',
+    username: '',
+    startDate: '',
+    endDate: '',
+    pageNo: 1,
+    pageSize: 10
+  },
+  user: {
+    userinfo: {
+      id: 4,
+      username: 'admin',
+      password: '',
+      avatar: null,
+      status: 1,
+      rid: 0
+    },
+    iat: 1692944092,
+    exp: 1693030492
+  },
+  costTime: 11,
+  authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyaW5mbyI6eyJpZCI6NCwidXNlcm5hbWUiOiJhZG1pbiIsInBhc3N3b3JkIjoiIiwiYXZhdGFyIjpudWxsLCJzdGF0dXMiOjEsInJpZCI6MH0sImlhdCI6MTY5Mjk0NDA5MiwiZXhwIjoxNjkzMDMwNDkyfQ.3DxZ8gjgXoBu4-sKv-u0GmV6ELOMJVuu8Zd3E3EcreA',
+  response: { status: 200, message: 'OK' }
+}
+[2023-08-25T14:31:21.192] [INFO] response - {
+  ip: '::ffff:127.0.0.1',
+  method: 'POST',
+  url: '/api/getMenu',
+  body: {},
+  user: {
+    userinfo: {
+      id: 4,
+      username: 'admin',
+      password: '',
+      avatar: null,
+      status: 1,
+      rid: 0
+    },
+    iat: 1692944092,
+    exp: 1693030492
+  },
+  costTime: 10,
+  authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyaW5mbyI6eyJpZCI6NCwidXNlcm5hbWUiOiJhZG1pbiIsInBhc3N3b3JkIjoiIiwiYXZhdGFyIjpudWxsLCJzdGF0dXMiOjEsInJpZCI6MH0sImlhdCI6MTY5Mjk0NDA5MiwiZXhwIjoxNjkzMDMwNDkyfQ.3DxZ8gjgXoBu4-sKv-u0GmV6ELOMJVuu8Zd3E3EcreA',
+  response: { status: 200, message: 'OK' }
+}
+[2023-08-25T14:40:04.484] [INFO] response - {
+  ip: '::ffff:127.0.0.1',
+  method: 'POST',
+  url: '/api/permissionList',
+  body: { id: 0 },
+  user: {
+    userinfo: {
+      id: 4,
+      username: 'admin',
+      password: '',
+      avatar: null,
+      status: 1,
+      rid: 0
+    },
+    iat: 1692944092,
+    exp: 1693030492
+  },
+  costTime: 17,
+  authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyaW5mbyI6eyJpZCI6NCwidXNlcm5hbWUiOiJhZG1pbiIsInBhc3N3b3JkIjoiIiwiYXZhdGFyIjpudWxsLCJzdGF0dXMiOjEsInJpZCI6MH0sImlhdCI6MTY5Mjk0NDA5MiwiZXhwIjoxNjkzMDMwNDkyfQ.3DxZ8gjgXoBu4-sKv-u0GmV6ELOMJVuu8Zd3E3EcreA',
+  response: { status: 200, message: 'OK' }
+}
+[2023-08-25T14:56:15.143] [INFO] response - {
+  ip: '::ffff:127.0.0.1',
+  method: 'POST',
+  url: '/api/roleList',
+  body: {
+    title: '',
+    username: '',
+    startDate: '',
+    endDate: '',
+    pageNo: 1,
+    pageSize: 10
+  },
+  user: {
+    userinfo: {
+      id: 4,
+      username: 'admin',
+      password: '',
+      avatar: null,
+      status: 1,
+      rid: 0
+    },
+    iat: 1692944092,
+    exp: 1693030492
+  },
+  costTime: 90,
+  authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyaW5mbyI6eyJpZCI6NCwidXNlcm5hbWUiOiJhZG1pbiIsInBhc3N3b3JkIjoiIiwiYXZhdGFyIjpudWxsLCJzdGF0dXMiOjEsInJpZCI6MH0sImlhdCI6MTY5Mjk0NDA5MiwiZXhwIjoxNjkzMDMwNDkyfQ.3DxZ8gjgXoBu4-sKv-u0GmV6ELOMJVuu8Zd3E3EcreA',
+  response: { status: 200, message: 'OK' }
+}
+[2023-08-25T15:03:59.729] [INFO] response - {
+  ip: '::ffff:127.0.0.1',
+  method: 'POST',
+  url: '/api/roleList',
+  body: {
+    title: '',
+    username: '',
+    startDate: '',
+    endDate: '',
+    pageNo: 1,
+    pageSize: 10
+  },
+  user: {
+    userinfo: {
+      id: 4,
+      username: 'admin',
+      password: '',
+      avatar: null,
+      status: 1,
+      rid: 0
+    },
+    iat: 1692944092,
+    exp: 1693030492
+  },
+  costTime: 72,
+  authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyaW5mbyI6eyJpZCI6NCwidXNlcm5hbWUiOiJhZG1pbiIsInBhc3N3b3JkIjoiIiwiYXZhdGFyIjpudWxsLCJzdGF0dXMiOjEsInJpZCI6MH0sImlhdCI6MTY5Mjk0NDA5MiwiZXhwIjoxNjkzMDMwNDkyfQ.3DxZ8gjgXoBu4-sKv-u0GmV6ELOMJVuu8Zd3E3EcreA',
+  response: { status: 200, message: 'OK' }
+}
