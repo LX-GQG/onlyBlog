@@ -54,6 +54,7 @@ app.use(cors({
     exposeHeaders: ["WWW-Authenticate", "Server-Authorization"] //设置获取其他自定义字段
 }));
 
+// 中间件
 app.use(compose(middleware));
 app.use(checkTokenMiddleware)
 
@@ -71,6 +72,7 @@ app.use(koajwt({ secret: jwtSecret }).unless({
     ]
 }));
 
+// 日志
 app.use(async (ctx, next) => {
     const start = new Date();
     await next();
@@ -88,7 +90,7 @@ app.on('error', (err, ctx) => {
 app.use(router.routes(),router.allowedMethods());
 
 
-
+// 端口号
 const port = 3000;
 
 const options = {
@@ -99,6 +101,7 @@ const options = {
 https.createServer(options, app.callback()).listen(port, () => {
     console.log(`Example app listening on port ${port}`)
 });
+// 因为开启https chorme会报错，只需要在地址栏输入：chrome://flags/#allow-insecure-localhost，然后将Insecure origins treated as secure中的Disabled改为Enabled即可。
 // app.listen(port, () => {
 //     console.log(`Example app listening on port ${port}`)
 // });

@@ -143,10 +143,16 @@ const updateUser = async (ctx) => {
         ctx.fail({ code: 1001, msg: '用户名已存在' });
         return;
     }
-    // 角色不能为空
-    if(!post.rid) {
-        ctx.fail({ code: 1001, msg: '角色不能为空' });
-        return;
+    // 角色不能为空, 超级管理员则跳过
+    if(post.rid !== 0) {
+        if(!post.rid) {
+            ctx.fail({ code: 1001, msg: '角色不能为空' });
+            return;
+        }
+    }
+    // 如果密码为空，则不修改密码
+    if(!post.password) {
+        delete post.password;
     }
     // 对密码进行加密
     if(post.password) {
@@ -170,6 +176,43 @@ const updateUser = async (ctx) => {
     ctx.success('修改成功', res);
 }
 
+// 修改密码
+const updatePassword = async (ctx) => {
+    const post = ctx.request.body;
+    if(!post.id) {
+        ctx.fail({ code: 1001, msg: 'id不能为空' });
+        return;
+    }
+    if(!post.password) {
+        ctx.fail({ code: 1001, msg: '密码不能为空' });
+        return;
+    }
+    // 需知道原密码
+    if(!post.old_password) {
+        ctx.fail({ code: 1001, msg: '原密码不能为空' });
+        return;
+    }
+    const res = await UserModel.findOne({
+        where: {
+            id: post.id
+        }
+    });
+    // 验证密码
+    const isPassword = await verifyPasswordAsync(post.old_password, res.dataValues.password);
+    if(!isPassword) {
+        ctx.fail({ code: 1001, msg: '原密码错误' });
+        return;
+    }
+    // 对密码进行加密
+    post.password = await hashPasswordAsync(post.password);
+    const result = await UserModel.update(post, {
+        where: {
+            id: post.id
+        }
+    });
+    ctx.success('修改成功', result);
+}
+
 const deleteUser = async (ctx) => {
     const post = ctx.request.body;
     if(!post.id) {
@@ -184,4 +227,4 @@ const deleteUser = async (ctx) => {
     ctx.success('删除成功', res);
 }
   
-module.exports = { userList,user,addUser,login,updateUser,deleteUser };
+module.exports = { userList,user,addUser,login,updateUser,deleteUser,updatePassword };

@@ -109,12 +109,17 @@ const routes = [
         methods: "post",
         path: "/api/updateUser",
         controller: userRouter.updateUser,
-        middleware: [checkPermission],
     },
     {
         methods: "post",
         path: "/api/deleteUser",
         controller: userRouter.deleteUser,
+        middleware: [checkPermission]
+    },
+    {
+        methods: "post",
+        path: "/api/updatePassword",
+        controller: userRouter.updatePassword,
         middleware: [checkPermission]
     },
     // 角色
