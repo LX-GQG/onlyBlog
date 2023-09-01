@@ -1,4 +1,4 @@
-const { homeRouter,userRouter,articleRouter,roleRouter,permissionRouter } = require('../controllers');
+const { homeRouter,userRouter,articleRouter,roleRouter,permissionRouter,adminRouter } = require('../controllers');
 const RoleModel = require('../models/role');
 const PermissionModel = require('../models/permission');
 const { checkToken } = require('../utils/token');
@@ -66,142 +66,184 @@ const routes = [
     // 登录注册
     {
         methods: "post",
+        path: "/admin/login",
+        controller: adminRouter.login
+    },
+    // 前台登录
+    {
+        methods: "post",
         path: "/api/login",
         controller: userRouter.login
+    },
+    // 前台注册
+    // {
+    //     methods: "post",
+    //     path: "/api/register",
+    //     controller: userRouter.register
+    // },
+    {
+        methods: "post",
+        path: "/api/newList",
+        controller: articleRouter.newList
     },
     // 首页
     {
         methods: "get",
-        path: "/api/home",
+        path: "/admin/home",
         controller: homeRouter.home
     },
     // 上传
     {
         methods: "post",
-        path: "/api/upload",
+        path: "/admin/upload",
         controller: homeRouter.upload
     },
     // 编辑器上传
     {
         methods: "post",
-        path: "/api/editorUpload",
+        path: "/admin/editorUpload",
         controller: homeRouter.editorUpload
     },
-    // 用户
+    // 后台用户
     {
         methods: "post",
-        path: "/api/addUser",
-        controller: userRouter.addUser,
+        path: "/admin/addAdmin",
+        controller: adminRouter.addAdmin,
         middleware: [checkPermission]
     },
     {
         methods: "post",
-        path: "/api/userList",
-        controller: userRouter.userList,
+        path: "/admin/adminList",
+        controller: adminRouter.adminList,
         middleware: [checkPermission]
     },
     {
         methods: "get",
-        path: "/api/user",
-        controller: userRouter.user
+        path: "/admin/admin",
+        controller: adminRouter.admin
     },
     {
         methods: "post",
-        path: "/api/updateUser",
-        controller: userRouter.updateUser,
+        path: "/admin/updateAdmin",
+        controller: adminRouter.updateAdmin,
     },
     {
         methods: "post",
-        path: "/api/deleteUser",
-        controller: userRouter.deleteUser,
+        path: "/admin/deleteAdmin",
+        controller: adminRouter.deleteAdmin,
         middleware: [checkPermission]
     },
     {
         methods: "post",
-        path: "/api/updatePassword",
-        controller: userRouter.updatePassword,
+        path: "/admin/updatePassword",
+        controller: adminRouter.updatePassword,
         middleware: [checkPermission]
     },
     // 角色
     {
         methods: "post",
-        path: "/api/roleList",
+        path: "/admin/roleList",
         controller: roleRouter.roleList,
         middleware: [checkPermission]
     },
     {
         methods: "post",
-        path: "/api/addRole",
+        path: "/admin/addRole",
         controller: roleRouter.addRole,
         middleware: [checkPermission]
     },
     {
         methods: "post",
-        path: "/api/updateRole",
+        path: "/admin/updateRole",
         controller: roleRouter.updateRole,
         middleware: [checkPermission]
     },
     {
         methods: "post",
-        path: "/api/deleteRole",
+        path: "/admin/deleteRole",
         controller: roleRouter.deleteRole,
         middleware: [checkPermission]
     },
     // 权限
     {
         methods: "post",
-        path: "/api/permissionList",
+        path: "/admin/permissionList",
         controller: permissionRouter.permissionList,
         middleware: [checkPermission]
     },
     {
         methods: "post",
-        path: "/api/getRolePermission",
+        path: "/admin/getRolePermission",
         controller: roleRouter.getRolePermission,
         middleware: [checkPermission]
     },
     {
         methods: "post",
-        path: "/api/assignPermission",
+        path: "/admin/assignPermission",
         controller: permissionRouter.assignPermission,
         middleware: [checkPermission]
     },
     // 获取菜单
     {
         methods: "post",
-        path: "/api/getMenu",
+        path: "/admin/getMenu",
         controller: permissionRouter.getMenuPermission,
         // middleware: [checkPermission]
     },
     // 文章
     {
         methods: "post",
-        path: "/api/addArticle",
+        path: "/admin/addArticle",
         controller: articleRouter.addArticle,
         middleware: [checkPermission]
     },
     {
         methods: "post",
-        path: "/api/articleList",
+        path: "/admin/articleList",
         controller: articleRouter.articleList,
         middleware: [checkPermission]
     },
     {
         methods: "post",
-        path: "/api/articleListByUserId",
+        path: "/admin/articleListByUserId",
         controller: articleRouter.articleListByUserId,
         middleware: [checkPermission]
     },
     {
         methods: "post",
-        path: "/api/updateArticle",
+        path: "/admin/updateArticle",
         controller: articleRouter.updateArticle,
         middleware: [checkPermission]
     },
     {
         methods: "post",
-        path: "/api/deleteArticle",
+        path: "/admin/deleteArticle",
         controller: articleRouter.deleteArticle,
+        middleware: [checkPermission]
+    },
+    // 用户
+    {
+        methods: "post",
+        path: "/admin/addUser",
+        controller: userRouter.addUser,
+        middleware: [checkPermission]
+    },
+    {
+        methods: "post",
+        path: "/admin/userList",
+        controller: userRouter.userList,
+        middleware: [checkPermission]
+    },
+    {
+        methods: "post",
+        path: "/admin/updateUser",
+        controller: userRouter.updateUser,
+        middleware: [checkPermission]
+    },
+    {
+        methods: "post",
+        path: "/admin/deleteUser",
+        controller: userRouter.deleteUser,
         middleware: [checkPermission]
     },
 ]

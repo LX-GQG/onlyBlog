@@ -61,8 +61,10 @@ app.use(checkTokenMiddleware)
 // 不需要验证的接口
 app.use(koajwt({ secret: jwtSecret }).unless({
     path: [
+        // 前台接口
+        /^\/api/,
         // 登录接口
-        /^\/api\/login/,
+        /^\/admin\/login/,
         // 注册接口
         // /^\/api\/register/,
         // 访问静态资源
@@ -95,7 +97,7 @@ const port = 3000;
 
 const options = {
     key: fs.readFileSync('./ssl/www.gqgwr.cn.key'),
-    cert: fs.readFileSync('./ssl/www.gqgwr.cn.pem')
+    cert: fs.readFileSync('./ssl/www.gqgwr.cn.pem'),
 }
 
 https.createServer(options, app.callback()).listen(port, () => {

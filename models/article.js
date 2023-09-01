@@ -32,6 +32,21 @@ const Article = sequelize.define('article', {
         allowNull: false,
         comment: '用户id',
     },
+    admin_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        comment: '管理员id',
+    },
+    type: {
+        type: DataTypes.STRING,
+        allowNull: true,
+        comment: '文章类型',
+    },
+    username: {
+        type: DataTypes.STRING,
+        allowNull: true,
+        comment: '用户名',
+    },
     create_time: {
         type: DataTypes.DATE,
         allowNull: false,

@@ -2,7 +2,7 @@ const sequelize = require("../config/db")
 
 const { DataTypes } = require('sequelize');
 
-const UserRoles = sequelize.define('user_role', {
+const AdminRoles = sequelize.define('admin_role', {
     id: {
         type: DataTypes.INTEGER,
         primaryKey: true, // 主键
@@ -30,4 +30,4 @@ const UserRoles = sequelize.define('user_role', {
 
 
 
-module.exports = UserRoles;
+module.exports = AdminRoles;

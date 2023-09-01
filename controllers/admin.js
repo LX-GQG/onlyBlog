@@ -1,47 +1,49 @@
 const db = require('../config/dbContent');
-const UserModel = require('../models/user');
-
+const AdminModel = require('../models/admin');
+const RoleModel = require('../models/role');
+const AdminRoleModel = require('../models/admin_role');
 const { createToken } = require('../utils/token');
 const { Op } = require('sequelize');
 const { hashPasswordAsync,verifyPasswordAsync } = require('../utils/utils');
 
+const admin = async (ctx) => {
+    try {
+        // const token = ctx.header.authorization.split(' ')[1];
+        // const decoded = await checkToken(token);
+        const sql = 'select * from admin';
+        const data = await db.query(sql);
+        ctx.body = data;
+    } catch (err) {
+        ctx.fail({ code: 401, msg: 'token错误' });
+    }
+}
 
-const userList = async (ctx) => {
+const adminList = async (ctx) => {
+    AdminModel.belongsToMany(RoleModel, { through: 'admin_role', foreignKey: 'uid', otherKey: 'rid' }); 
+    // 基于through表查询，分页查询
     const post = ctx.request.body;
     const pageNo = post.pageNo || 1;
     const pageSize = post.pageSize || 10;
-    const where = {};
-    if (post.id) {
-        where.id = {
-            [Op.like]: `%${post.id}%`
-        };
-    }
-    if (post.username) {
-        where.username = {
-            [Op.like]: `%${post.username}%`
-        };
-    }
-    if (post.startDate && post.endDate) {
-        where.create_time = {
-            [Op.between]: [post.startDate, post.endDate]
-        };
-    }
-    if (post.email) {
-        where.email = {
-            [Op.like]: `%${post.email}%`
-        }
-    }
-    const res = await UserModel.findAndCountAll({
+    const res = await AdminModel.findAndCountAll({
         attributes: { exclude: ['password'] }, // 排除密码字段
+        include: [{
+            model: RoleModel,
+            attributes: ['role_type']
+        }],
+        // 排除超级管理员
+        where: {
+            rid: {
+                [Op.ne]: 0
+            }
+        },
         offset: (pageNo - 1) * pageSize,
         limit: pageSize,
-        where
     });
     
     ctx.success({ data: res });
 };
 
-const addUser = async (ctx) => {
+const addAdmin = async (ctx) => {
     const post = ctx.request.body;
     if(!post.username || !post.password) {
         ctx.fail({ code: 1001, msg: '用户名或密码不能为空' });
@@ -52,7 +54,7 @@ const addUser = async (ctx) => {
         return;
     }
     // 用户名不能相同
-    const res = await UserModel.findOne({
+    const res = await AdminModel.findOne({
         where: {
             username: post.username
         }
@@ -73,8 +75,8 @@ const addUser = async (ctx) => {
     post.password = await hashPasswordAsync(post.password);
     let result;
     try {
-        result = await UserModel.create(post);
-        await UserRoleModel.create({
+        result = await AdminModel.create(post);
+        await AdminRoleModel.create({
             rid: post.rid,
             uid: result.dataValues.id
         });
@@ -92,7 +94,7 @@ const login = async (ctx) => {
         ctx.fail({ code: 1001, msg: '用户名或密码不能为空' });
         return;
     }
-    const res = await UserModel.findOne({
+    const res = await AdminModel.findOne({
         where: {
             username: post.username
         }
@@ -122,14 +124,14 @@ const login = async (ctx) => {
     }
 }
 
-const updateUser = async (ctx) => {
+const updateAdmin = async (ctx) => {
     const post = ctx.request.body;
     if(!post.id) {
         ctx.fail({ code: 1001, msg: 'id不能为空' });
         return;
     }
     // 用户名不能相同
-    const isUsername = await UserModel.findOne({
+    const isUsername = await AdminModel.findOne({
         where: {
             username: post.username,
             id: {
@@ -156,14 +158,14 @@ const updateUser = async (ctx) => {
     if(post.password) {
         post.password = await hashPasswordAsync(post.password);
     }
-    UserModel.belongsToMany(RoleModel, { through: 'user_role', foreignKey: 'uid', otherKey: 'rid' }); 
-    const res = await UserModel.update(post, {
+    AdminModel.belongsToMany(RoleModel, { through: 'admin_role', foreignKey: 'uid', otherKey: 'rid' }); 
+    const res = await AdminModel.update(post, {
         where: {
             id: post.id
         }
     });
     
-    await UserRoleModel.update({
+    await AdminRoleModel.update({
         rid: post.rid
     }, {
         where: {
@@ -190,7 +192,7 @@ const updatePassword = async (ctx) => {
         ctx.fail({ code: 1001, msg: '原密码不能为空' });
         return;
     }
-    const res = await UserModel.findOne({
+    const res = await AdminModel.findOne({
         where: {
             id: post.id
         }
@@ -203,7 +205,7 @@ const updatePassword = async (ctx) => {
     }
     // 对密码进行加密
     post.password = await hashPasswordAsync(post.password);
-    const result = await UserModel.update(post, {
+    const result = await AdminModel.update(post, {
         where: {
             id: post.id
         }
@@ -211,13 +213,13 @@ const updatePassword = async (ctx) => {
     ctx.success('修改成功', result);
 }
 
-const deleteUser = async (ctx) => {
+const deleteAdmin = async (ctx) => {
     const post = ctx.request.body;
     if(!post.id) {
         ctx.fail({ code: 1001, msg: 'id不能为空' });
         return;
     }
-    const res = await UserModel.destroy({
+    const res = await AdminModel.destroy({
         where: {
             id: post.id
         }
@@ -225,4 +227,4 @@ const deleteUser = async (ctx) => {
     ctx.success('删除成功', res);
 }
   
-module.exports = { userList,addUser,login,updateUser,deleteUser,updatePassword };
+module.exports = { adminList,admin,addAdmin,login,updateAdmin,deleteAdmin,updatePassword };

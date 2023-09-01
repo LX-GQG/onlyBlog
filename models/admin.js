@@ -2,9 +2,7 @@ const sequelize = require("../config/db")
 
 const { Sequelize, DataTypes } = require('sequelize');
 
-// const Role = require('./role');
-
-const User = sequelize.define('user', {
+const Admin = sequelize.define('admin', {
     // 在这里定义模型属性
     id: {
         type: DataTypes.INTEGER,
@@ -53,31 +51,11 @@ const User = sequelize.define('user', {
         defaultValue: 1,
         comment: '用户状态',
     },
-    email: {
-        type: DataTypes.STRING,
-        allowNull: true,
-        comment: '邮箱',
-    },
-    ip: {
-        type: DataTypes.STRING,
-        allowNull: true,
-        comment: 'ip',
-    },
-    remark: {
-        type: DataTypes.STRING,
-        allowNull: true,
-        comment: '备注',
-    },
-    create_time: {
-        type: DataTypes.DATE,
+    rid: {
+        type: DataTypes.INTEGER,
         allowNull: false,
-        comment: '创建时间',
+        comment: '角色id',
     },
-    update_time: {
-        type: DataTypes.DATE,
-        allowNull: false,
-        comment: '更新时间',
-    }
 });
 
-module.exports = User;
+module.exports = Admin;

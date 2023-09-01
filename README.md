@@ -1,9 +1,11 @@
 # onlyBolg
-基于koa和sequelize 开发的result api 后台 ，使用bcryptjs对密码进行加密，并进行了权限控制，分配权限，根据权限进行显示对应的内容
+基于koa和sequelize 开发的result api 后台 ，使用bcryptjs对密码进行加密，并进行了权限控制，分配权限，根据权限进行路由拦截。
 
 使用sequelize对数据库进行操作，jwt对token进行封装，log4js进行日志监控，https访问，文件上传，跨域
 
 Koa 框架做服务端 API 接口，只做了简单的基础，其余内容可以根据代码进行扩展
+
+后台管理系统地址：https://github.com/LX-GQG/onlyBlogAdmin
 
 ## 1.1 项目功能
 - 文章管理
