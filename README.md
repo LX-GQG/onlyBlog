@@ -57,10 +57,16 @@ npm install 或者 yarn install
 
 npm run dev 或者 yarn dev
 ```
+
+api接口文档地址：https://console-docs.apipost.cn/preview/6aabac7f4427a4ca/8a7c5e8c98f2b42a
+
 本项目有权限控制，需登录，请求头上需要Authorization: Bearer + token才可以访问，Bearer和token需要用空格隔开。
 超级管理员拥有全部权限 
 账号：admin
 密码：123456
-默认端口为3000，即可通过 https://localhost:3000/api/xxx 调用接口
 
+端口号设置在根目录下的app.js文件中
+默认端口为3658，
+即可通过 https://localhost:3658/admin/xxx 调用后台接口
+https://localhost:3658/api/xxx 调用前台接口(目前只有登录接口，文章接口，后续会继续完善)
 

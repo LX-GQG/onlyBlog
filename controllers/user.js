@@ -1,6 +1,6 @@
 const db = require('../config/dbContent');
 const UserModel = require('../models/user');
-
+const { getClientIP } = require('../utils/ip');
 const { createToken } = require('../utils/token');
 const { Op } = require('sequelize');
 const { hashPasswordAsync,verifyPasswordAsync } = require('../utils/utils');
@@ -47,10 +47,6 @@ const addUser = async (ctx) => {
         ctx.fail({ code: 1001, msg: '用户名或密码不能为空' });
         return;
     }
-    if(!post.rid) {
-        ctx.fail({ code: 1001, msg: '角色不能为空' });
-        return;
-    }
     // 用户名不能相同
     const res = await UserModel.findOne({
         where: {
@@ -61,24 +57,16 @@ const addUser = async (ctx) => {
         ctx.fail({ code: 1001, msg: '用户名已存在' });
         return;
     }
-    if(!post.username || !post.password) {
-        ctx.fail({ code: 1001, msg: '用户名或密码不能为空' });
-        return;
-    }
-    if(!post.rid) {
-        ctx.fail({ code: 1001, msg: '角色不能为空' });
-        return;
-    }
     // 密码加密
     post.password = await hashPasswordAsync(post.password);
+    post.create_time = new Date();
+    post.update_time = new Date();
+    const ip = getClientIP(ctx);
+    post.ip = ip;
+    // 获取用户的真实ip
     let result;
     try {
         result = await UserModel.create(post);
-        await UserRoleModel.create({
-            rid: post.rid,
-            uid: result.dataValues.id
-        });
-
     } catch (error) {
         ctx.fail({ code: 1001, msg: '注册失败' });
         return;
@@ -86,46 +74,10 @@ const addUser = async (ctx) => {
     ctx.success('注册成功', result);
 }
 
-const login = async (ctx) => {
-    const post = ctx.request.body;
-    if(!post.username || !post.password) {
-        ctx.fail({ code: 1001, msg: '用户名或密码不能为空' });
-        return;
-    }
-    const res = await UserModel.findOne({
-        where: {
-            username: post.username
-        }
-    });
-    // 验证密码
-    const isPassword = await verifyPasswordAsync(post.password, res.dataValues.password);
-    if(!isPassword) {
-        ctx.fail({ code: 1001, msg: '密码错误' });
-        return;
-    }
-    if(res) {
-        // 生成token,并返回用户信息
-        const userinfo = res.dataValues;
-        userinfo.password = '';
-        const token = createToken({ userinfo: userinfo });
-        ctx.body = {
-            code: 200,
-            msg: '登录成功',
-            data: {
-                userinfo,
-                token
-            }
-        }
-    } else {
-        ctx.fail({ code: 1001, msg: '没有此用户' });
-        return;
-    }
-}
-
 const updateUser = async (ctx) => {
     const post = ctx.request.body;
-    if(!post.id) {
-        ctx.fail({ code: 1001, msg: 'id不能为空' });
+    if(!post.id || !post.username) {
+        ctx.fail({ code: 1001, msg: 'id或者用户名不能为空' });
         return;
     }
     // 用户名不能相同
@@ -141,13 +93,6 @@ const updateUser = async (ctx) => {
         ctx.fail({ code: 1001, msg: '用户名已存在' });
         return;
     }
-    // 角色不能为空, 超级管理员则跳过
-    if(post.rid !== 0) {
-        if(!post.rid) {
-            ctx.fail({ code: 1001, msg: '角色不能为空' });
-            return;
-        }
-    }
     // 如果密码为空，则不修改密码
     if(!post.password) {
         delete post.password;
@@ -156,18 +101,9 @@ const updateUser = async (ctx) => {
     if(post.password) {
         post.password = await hashPasswordAsync(post.password);
     }
-    UserModel.belongsToMany(RoleModel, { through: 'user_role', foreignKey: 'uid', otherKey: 'rid' }); 
     const res = await UserModel.update(post, {
         where: {
             id: post.id
-        }
-    });
-    
-    await UserRoleModel.update({
-        rid: post.rid
-    }, {
-        where: {
-            uid: post.id
         }
     });
     
@@ -222,7 +158,93 @@ const deleteUser = async (ctx) => {
             id: post.id
         }
     });
+    // 判断是否删除成功
+    if(!res) {
+        ctx.fail({ code: 1001, msg: '删除失败' });
+        return;
+    }
     ctx.success('删除成功', res);
 }
+
+const login = async (ctx) => {
+    const post = ctx.request.body;
+    if(!post.username || !post.password) {
+        ctx.fail({ code: 1001, msg: '用户名或密码不能为空' });
+        return;
+    }
+    const res = await UserModel.findOne({
+        where: {
+            username: post.username
+        }
+    });
+    // 验证密码
+    const isPassword = await verifyPasswordAsync(post.password, res.dataValues.password);
+    if(!isPassword) {
+        ctx.fail({ code: 1001, msg: '密码错误' });
+        return;
+    }
+    // 修改ip
+    const ip = getClientIP(ctx);
+    await UserModel.update({
+        ip: ip
+    }, {
+        where: {
+            username: post.username
+        }
+    });
+    if(res) {
+        // 生成token,并返回用户信息
+        const userinfo = res.dataValues;
+        userinfo.password = '';
+        const token = createToken({ userinfo: userinfo });
+        ctx.body = {
+            code: 200,
+            msg: '登录成功',
+            data: {
+                userinfo,
+                token
+            }
+        }
+    } else {
+        ctx.fail({ code: 1001, msg: '没有此用户' });
+        return;
+    }
+}
+
+// 注册
+const register = async (ctx) => {
+    const post = ctx.request.body;
+    if(!post.username || !post.password) {
+        ctx.fail({ code: 1001, msg: '用户名或密码不能为空' });
+        return;
+    }
+    // 用户名不能相同
+    const res = await UserModel.findOne({
+        where: {
+            username: post.username
+        }
+    });
+    if(res) {
+        ctx.fail({ code: 1001, msg: '用户名已存在' });
+        return;
+    }
+    // 密码加密
+    post.password = await hashPasswordAsync(post.password);
+    post.create_time = new Date();
+    post.update_time = new Date();
+
+    // 获取用户的真实ip
+    const ip = getClientIP(ctx);
+    post.ip = ip;
+    
+    let result;
+    try {
+        result = await UserModel.create(post);
+    } catch (error) {
+        ctx.fail({ code: 1001, msg: '注册失败' });
+        return;
+    }
+    ctx.success('注册成功', result);
+}
   
-module.exports = { userList,addUser,login,updateUser,deleteUser,updatePassword };
+module.exports = { userList,addUser,login,updateUser,deleteUser,updatePassword,register };

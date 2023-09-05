@@ -136,6 +136,7 @@ const updateArticle = async (ctx) => {
     const res = await ArticleModel.update({
         title: post.title,
         content: post.content,
+        status: post.status,
         update_time: new Date(),
     }, {
         where: {
@@ -152,9 +153,8 @@ const updateArticle = async (ctx) => {
 // 删除文章
 const deleteArticle = async (ctx) => {
     const post = ctx.request.body;
-    // 所有参数不能为空
-    if(!post.id) {
-        const res = await ArticleModel.delete({
+    if(post.id) {
+        const res = await ArticleModel.destroy({
             where: {
                 id: post.id
             }
@@ -177,7 +177,10 @@ const newList = async (ctx) => {
     const res = await ArticleModel.findAndCountAll({
         offset: (pageNo - 1) * pageSize,
         limit: pageSize,
-        attributes: { exclude: ['admin_id','user_id'] }, 
+        where: {
+            status: 1
+        },
+        attributes: { exclude: ['admin_id','user_id'] },
     })
 
     ctx.success({ msg: "查询成功", data: res });

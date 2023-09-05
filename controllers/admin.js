@@ -3,6 +3,7 @@ const AdminModel = require('../models/admin');
 const RoleModel = require('../models/role');
 const AdminRoleModel = require('../models/admin_role');
 const { createToken } = require('../utils/token');
+const { getClientIP } = require('../utils/ip');
 const { Op } = require('sequelize');
 const { hashPasswordAsync,verifyPasswordAsync } = require('../utils/utils');
 
@@ -73,6 +74,8 @@ const addAdmin = async (ctx) => {
     }
     // 密码加密
     post.password = await hashPasswordAsync(post.password);
+    const ip = getClientIP(ctx);
+    post.ip = ip;
     let result;
     try {
         result = await AdminModel.create(post);
@@ -105,6 +108,20 @@ const login = async (ctx) => {
         ctx.fail({ code: 1001, msg: '密码错误' });
         return;
     }
+    // 判断是否被禁用
+    if(res.dataValues.status === 0) {
+        ctx.fail({ code: 1001, msg: '该用户已被禁用' });
+        return;
+    }
+    // 修改ip
+    const ip = getClientIP(ctx);
+    await AdminModel.update({
+        ip: ip
+    }, {
+        where: {
+            username: post.username
+        }
+    });
     if(res) {
         // 生成token,并返回用户信息
         const userinfo = res.dataValues;
@@ -224,6 +241,11 @@ const deleteAdmin = async (ctx) => {
             id: post.id
         }
     });
+    // 判断是否删除成功
+    if(!res) {
+        ctx.fail({ code: 1001, msg: '删除失败' });
+        return;
+    }
     ctx.success('删除成功', res);
 }
   

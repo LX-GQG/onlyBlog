@@ -45,6 +45,11 @@ const Admin = sequelize.define('admin', {
         allowNull: true,
         comment: '头像',
     },
+    ip: {
+        type: DataTypes.STRING,
+        allowNull: true,
+        comment: 'ip',
+    },
     status: {
         type: DataTypes.TINYINT,
         allowNull: false,
