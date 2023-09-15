@@ -1,5 +1,6 @@
 const sequelize = require("../config/db")
-
+const UserModel = require('./user');
+const AdminModel = require('./admin');
 const { Sequelize, DataTypes } = require('sequelize');
 
 const Article = sequelize.define('article', {
@@ -10,6 +11,11 @@ const Article = sequelize.define('article', {
         autoIncrement: true, // 自增
         allowNull: false, // 不为空
         comment: 'id',
+    },
+    cover: {
+        type: DataTypes.STRING,
+        allowNull: true,
+        comment: '文章封面',
     },
     title: {
         type: DataTypes.STRING,
@@ -36,16 +42,6 @@ const Article = sequelize.define('article', {
         type: DataTypes.INTEGER,
         allowNull: false,
         comment: '管理员id',
-    },
-    type: {
-        type: DataTypes.STRING,
-        allowNull: true,
-        comment: '文章类型',
-    },
-    username: {
-        type: DataTypes.STRING,
-        allowNull: true,
-        comment: '用户名',
     },
     create_time: {
         type: DataTypes.DATE,

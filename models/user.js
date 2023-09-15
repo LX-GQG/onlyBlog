@@ -2,8 +2,6 @@ const sequelize = require("../config/db")
 
 const { Sequelize, DataTypes } = require('sequelize');
 
-// const Role = require('./role');
-
 const User = sequelize.define('user', {
     // 在这里定义模型属性
     id: {
@@ -17,18 +15,6 @@ const User = sequelize.define('user', {
         type: DataTypes.STRING,
         allowNull: false,
         comment: '用户名',
-        // 验证
-        validate: {
-            // 验证用户名是否为空
-            notNull: {
-                msg: '用户名不能为空'
-            },
-            // 验证用户名长度
-            len: {
-                args: [2, 30],
-                msg: '用户名长度为2-30个字符'
-            }
-        }
     },
     password: {
         type: DataTypes.STRING,

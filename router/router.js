@@ -1,4 +1,4 @@
-const { homeRouter,userRouter,articleRouter,roleRouter,permissionRouter,adminRouter } = require('../controllers');
+const { homeRouter,userRouter,articleRouter,roleRouter,permissionRouter,adminRouter,tagRouter } = require('../controllers');
 const RoleModel = require('../models/role');
 const PermissionModel = require('../models/permission');
 const { checkToken } = require('../utils/token');
@@ -44,7 +44,7 @@ async function checkPermission(ctx, next) {
                 if (permission.indexOf(ctx.path) > -1) {
                     await next();
                 } else {
-                    ctx.fail({ code: 1001, msg: '没有权限' });
+                    ctx.fail({ code: 1001, msg: ctx.path + ' 没有权限' });
                     return;
                 }
             } catch (err) {
@@ -85,6 +85,11 @@ const routes = [
         methods: "post",
         path: "/api/newList",
         controller: articleRouter.newList
+    },
+    {
+        methods: "post",
+        path: "/api/newDetail",
+        controller: articleRouter.newDetail
     },
     // 首页
     {
@@ -219,6 +224,37 @@ const routes = [
         methods: "post",
         path: "/admin/deleteArticle",
         controller: articleRouter.deleteArticle,
+        middleware: [checkPermission]
+    },
+    {
+        methods: "post",
+        path: "/admin/getArticleTag",
+        controller: tagRouter.getArticleTag,
+        middleware: [checkPermission]
+    },
+    // 标签
+    {
+        methods: "post",
+        path: "/admin/addTag",
+        controller: tagRouter.addTag,
+        middleware: [checkPermission]
+    },
+    {
+        methods: "post",
+        path: "/admin/tagList",
+        controller: tagRouter.tagList,
+        middleware: [checkPermission]
+    },
+    {
+        methods: "post",
+        path: "/admin/updateTag",
+        controller: tagRouter.updateTag,
+        middleware: [checkPermission]
+    },
+    {
+        methods: "post",
+        path: "/admin/deleteTag",
+        controller: tagRouter.deleteTag,
         middleware: [checkPermission]
     },
     // 用户

@@ -35,9 +35,8 @@ const userList = async (ctx) => {
         attributes: { exclude: ['password'] }, // 排除密码字段
         offset: (pageNo - 1) * pageSize,
         limit: pageSize,
-        where
+        where: where
     });
-    
     ctx.success({ data: res });
 };
 
@@ -172,11 +171,17 @@ const login = async (ctx) => {
         ctx.fail({ code: 1001, msg: '用户名或密码不能为空' });
         return;
     }
+    // 用户名不能相同并且status为1
     const res = await UserModel.findOne({
         where: {
-            username: post.username
+            username: post.username,
+            status: 1
         }
     });
+    if(!res) {
+        ctx.fail({ code: 1001, msg: '没有此用户或者用户被禁用' });
+        return;
+    }
     // 验证密码
     const isPassword = await verifyPasswordAsync(post.password, res.dataValues.password);
     if(!isPassword) {
@@ -205,9 +210,6 @@ const login = async (ctx) => {
                 token
             }
         }
-    } else {
-        ctx.fail({ code: 1001, msg: '没有此用户' });
-        return;
     }
 }
 

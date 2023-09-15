@@ -40,9 +40,9 @@ let logger = {}
 // 自定义输出格式，确定哪些内容输出到日志文件中
 const formatError = (ctx, err) => {
     const { method, url } = ctx
-    // body可能不存在
-    const body = ctx.request.body || {}
-    const user = ctx.state.user || {}
+    // body可能不存在, request.body可能不存在
+    const body = ctx?.request?.body || {}
+    const user = ctx?.state?.user || {}
     // 将请求方法，请求路径，请求体，登录用户，错误信息
     return { method, url, body, user, err }
 }
