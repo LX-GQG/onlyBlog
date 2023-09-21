@@ -22,5 +22,15 @@ const editorUpload = async (ctx) => {
     // 返回保存的路径
     ctx.body = { link:`${ctx.origin}/upload/${basename}` };
 };
+
+// 前台上传图片
+const uploadImg = async (ctx) => {
+    // 获取上传文件
+    const file = ctx.request.files.file;
+    // 创建可读流
+    const basename = path.basename(file.filepath)
+    // 返回保存的路径
+    ctx.body = { url: `${ctx.origin}/upload/${basename}` };
+};
   
-module.exports = { home, upload, editorUpload };
+module.exports = { home, upload, editorUpload, uploadImg };

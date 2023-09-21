@@ -335,6 +335,53 @@ const newDetail = async (ctx) => {
     ctx.success({ msg: "查询成功", data: res });
 }
 
+// 前台用户创建文章
+const createArticle = async (ctx) => {
+    // 拿取token的内容
+    if (!ctx.header.authorization) {
+        ctx.fail({ code: 1001, msg: 'token不存在' });
+        return
+    }
+
+    const token = ctx.header.authorization.split(' ')[1];
+    const decoded = await checkToken(token);
+    // 发布文章
+    const post = ctx.request.body;
+    // 所有参数不能为空
+    if(!post.title || !post.content) {
+        ctx.fail({ code: 1001, msg: '参数不能为空' });
+        return; 
+    }
+    const res = await ArticleModel.create({
+        cover: post.cover,
+        title: post.title,
+        content: post.content,
+        admin_id: 0,
+        status: 1,
+        user_id: decoded.userinfo.id,
+        create_time: new Date(),
+        update_time: new Date(),
+    });
+    if(res) {
+        // 获取文章的标签
+        const tag = post.tags ? post.tags : [];
+        if (tag.length > 0) {
+            tag.forEach(async item => {
+                await TagArticleModel.create({
+                    aid: res.dataValues.id,
+                    tid: item
+                });
+            });
+        }
+        ctx.success({ msg: '发布成功' });
+        
+    } else {
+        ctx.fail({ code: 1001, msg: '发布失败' });
+    }
+}
+
+// 
+
 module.exports = {
     addArticle,
     articleList,
@@ -342,5 +389,6 @@ module.exports = {
     updateArticle,
     deleteArticle,
     newList,
-    newDetail
+    newDetail,
+    createArticle
 }

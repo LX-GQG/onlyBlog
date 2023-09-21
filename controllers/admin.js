@@ -248,5 +248,11 @@ const deleteAdmin = async (ctx) => {
     }
     ctx.success('删除成功', res);
 }
+
+// 获取关联角色
+const getRoleList = async (ctx) => {
+    const res = await RoleModel.findAll();
+    ctx.success({ msg: "查询成功", data: res });
+}
   
-module.exports = { adminList,admin,addAdmin,login,updateAdmin,deleteAdmin,updatePassword };
+module.exports = { adminList,admin,addAdmin,login,updateAdmin,deleteAdmin,updatePassword,getRoleList };

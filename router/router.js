@@ -91,6 +91,16 @@ const routes = [
         path: "/api/newDetail",
         controller: articleRouter.newDetail
     },
+    {
+        methods: "post",
+        path: "/api/createNew",
+        controller: articleRouter.createArticle,
+    },
+    {
+        methods: "post",
+        path: "/api/getTag",
+        controller: tagRouter.getArticleTag
+    },
     // 首页
     {
         methods: "get",
@@ -108,6 +118,12 @@ const routes = [
         methods: "post",
         path: "/admin/editorUpload",
         controller: homeRouter.editorUpload
+    },
+    // 前台上传
+    {
+        methods: "post",
+        path: "/api/upload",
+        controller: homeRouter.uploadImg
     },
     // 后台用户
     {
@@ -142,6 +158,12 @@ const routes = [
         methods: "post",
         path: "/admin/updatePassword",
         controller: adminRouter.updatePassword,
+        middleware: [checkPermission]
+    },
+    {
+        methods: "post",
+        path: "/admin/getRoleList",
+        controller: adminRouter.getRoleList,
         middleware: [checkPermission]
     },
     // 角色
