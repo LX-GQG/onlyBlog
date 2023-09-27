@@ -3,6 +3,10 @@ const compose = require("koa-compose");
 const koaStatic = require("koa-static");
 const checkTokenMiddleware = require("./utils/auth").checkTokenMiddleware;
 
+const http = require('http');
+const WebSocket = require('ws');
+const WebSocketApi = require('./utils/websocket');
+
 const middleware = require("./middleware");
 const koajwt = require('koa-jwt');
 const jwtSecret = require('./config/config').tokenConfig.serect;
@@ -22,6 +26,9 @@ const path = require('path');
 const { log, errLogger, resLogger } = require('./utils/log4');
 
 const app = new Koa();
+
+// 端口号
+const port = 3658;
 
 // Force HTTPS on all page
 app.use(enforceHttps({
@@ -81,7 +88,7 @@ app.use(async (ctx, next) => {
     const end = new Date() - start;
 
     resLogger(ctx, end);
-    console.log(`${ctx.method} ${ctx.url} - ${end}ms`);
+    // console.log(`${ctx.method} ${ctx.url} - ${end}ms`);
 })
 
 app.on('error', (err, ctx) => {
@@ -91,19 +98,24 @@ app.on('error', (err, ctx) => {
 
 app.use(router.routes(),router.allowedMethods());
 
-
-// 端口号
-const port = 3658;
-
 const options = {
     key: fs.readFileSync('./ssl/www.gqgwr.cn.key'),
     cert: fs.readFileSync('./ssl/www.gqgwr.cn.pem'),
 }
 
-https.createServer(options, app.callback()).listen(port, () => {
+ 
+const server = https.createServer(options, app.callback()).listen(port, () => {
     console.log(`Example app listening on port ${port}`)
 });
 // 因为开启https chorme会报错，只需要在地址栏输入：chrome://flags/#allow-insecure-localhost，然后将Insecure origins treated as secure中的Disabled改为Enabled即可。
 // app.listen(port, () => {
 //     console.log(`Example app listening on port ${port}`)
 // });
+
+// websocket，暂时也未做任何功能，如果不需要可以注释掉，即可关闭WebSocket
+app.context.cusSender = [];
+app.context.cusReader = [];
+// websocket
+const wss = new WebSocket.Server({ server });
+
+WebSocketApi(wss, app);

@@ -1,4 +1,4 @@
-const { homeRouter,userRouter,articleRouter,roleRouter,permissionRouter,adminRouter,tagRouter } = require('../controllers');
+const { homeRouter,userRouter,articleRouter,roleRouter,permissionRouter,adminRouter,tagRouter,commentRouter } = require('../controllers');
 const RoleModel = require('../models/role');
 const PermissionModel = require('../models/permission');
 const { checkToken } = require('../utils/token');
@@ -100,6 +100,11 @@ const routes = [
         methods: "post",
         path: "/api/getTag",
         controller: tagRouter.getArticleTag
+    },
+    {
+        methods: "post",
+        path: "/api/newComment",
+        controller: commentRouter.articleComment
     },
     // 首页
     {
@@ -252,6 +257,25 @@ const routes = [
         methods: "post",
         path: "/admin/getArticleTag",
         controller: tagRouter.getArticleTag,
+        middleware: [checkPermission]
+    },
+    // 评论
+    {
+        methods: "post",
+        path: "/admin/articleComment",
+        controller: commentRouter.articleComment,
+        middleware: [checkPermission]
+    },
+    {
+        methods: "post",
+        path: "/admin/addComment",
+        controller: commentRouter.addComment,
+        middleware: [checkPermission]
+    },
+    {
+        methods: "post",
+        path: "/admin/delComment",
+        controller: commentRouter.delComment,
         middleware: [checkPermission]
     },
     // 标签

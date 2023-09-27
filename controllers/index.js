@@ -5,6 +5,7 @@ const roleRouter = require('./role');
 const permissionRouter = require('./permission');
 const adminRouter = require('./admin');
 const tagRouter = require('./tag');
+const commentRouter = require('./comment');
 
 module.exports = {
     homeRouter,
@@ -13,5 +14,6 @@ module.exports = {
     roleRouter,
     permissionRouter,
     adminRouter,
-    tagRouter
+    tagRouter,
+    commentRouter
 };
