@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 80026
 File Encoding         : 65001
 
-Date: 2023-09-22 09:23:43
+Date: 2023-09-28 15:52:59
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -35,7 +35,7 @@ CREATE TABLE `admin` (
 -- ----------------------------
 INSERT INTO `admin` VALUES ('2', 'lx', '$2a$10$vgywj35E5Ny7Yp7w9RZzDeNirOV2KaL/Pca4jrUwbUbVa7SOL0uuy', 'https://localhost:3658/upload/ec93911cefbca221381835f01.jpg', '::1', '1', '1');
 INSERT INTO `admin` VALUES ('3', '123', '$2a$10$BqTeBoI5OXVgtSBfL0Iq9OzHprB02IC/NfrdY3Aie6QRYIYrY4q2u', null, '::1', '1', '2');
-INSERT INTO `admin` VALUES ('4', 'admin', '$2a$10$KDDW.HWgxY2cgz2gb0pz5Ou44YXD1PizT1AgtnOQqolh4MxhNsU9q', 'https://localhost:3000/upload/f8a6e9ab7180d0ead9d2aa100.jpg', '113.87.128.170', '1', '0');
+INSERT INTO `admin` VALUES ('4', 'admin', '$2a$10$KDDW.HWgxY2cgz2gb0pz5Ou44YXD1PizT1AgtnOQqolh4MxhNsU9q', 'https://localhost:3000/upload/f8a6e9ab7180d0ead9d2aa100.jpg', '::1', '1', '0');
 INSERT INTO `admin` VALUES ('5', '11', '$2a$10$7qJnRMFWaaTqbvp3icqzYOc7APMqGzfaSnL6IZTVI0VYip9KBroUy', 'http://localhost:3000/upload/2e350376a84c48cea76af3c07.png', null, '1', '1');
 INSERT INTO `admin` VALUES ('8', '888', '$2a$10$VEguHHWaNBwzqSMbkYyJJeMlsKlHeJ0B6okDqHcFlvy8uIHLFZPbW', null, '::1', '1', '4');
 INSERT INTO `admin` VALUES ('9', '456', '$2a$10$ea3Sb.SoR5ctvtGG0kk1K.OnCtf00I.DctG6HnHHyDfwmfZylKNRS', null, '127.0.0.1', '1', '8');
@@ -97,6 +97,27 @@ INSERT INTO `article` VALUES ('18', null, '123', '123', '1', '3', '0', '2023-09-
 INSERT INTO `article` VALUES ('21', 'https://localhost:3658/upload/d33062d2cd0ec81f697cee000.jpg', '132132312132132132', '<p>1231212321313123</p>', '1', '2', '0', '2023-09-20 10:46:19', '2023-09-21 13:40:16');
 INSERT INTO `article` VALUES ('28', 'https://www.gqgwr.cn:3658/upload/9d674a9fc2f7c68cab6137001.jpg', '132132312132132132', '<p>1561651651165</p>', '1', '2', '0', '2023-09-20 11:20:48', '2023-09-20 11:20:48');
 INSERT INTO `article` VALUES ('29', 'https://www.gqgwr.cn:3658/upload/9d674a9fc2f7c68cab6137007.png', '我爱你', '<p>forever</p>', '1', '2', '0', '2023-09-20 15:13:49', '2023-09-20 15:13:49');
+
+-- ----------------------------
+-- Table structure for `comment`
+-- ----------------------------
+DROP TABLE IF EXISTS `comment`;
+CREATE TABLE `comment` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `aid` int NOT NULL,
+  `uid` int NOT NULL,
+  `pid` int NOT NULL,
+  `content` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `create_time` datetime NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- ----------------------------
+-- Records of comment
+-- ----------------------------
+INSERT INTO `comment` VALUES ('1', '12', '1', '0', '123132132', '2023-09-22 11:43:44');
+INSERT INTO `comment` VALUES ('2', '12', '2', '0', '666', '2023-09-22 14:58:33');
+INSERT INTO `comment` VALUES ('4', '29', '2', '0', '123', '2023-09-25 10:30:26');
 
 -- ----------------------------
 -- Table structure for `menu`
@@ -166,6 +187,9 @@ INSERT INTO `permission` VALUES ('28', '6', '25', '/admin/deleteTag', '删除标
 INSERT INTO `permission` VALUES ('29', '6', '25', '/admin/addTag', '添加标签', '0', '0', null);
 INSERT INTO `permission` VALUES ('30', '1', '13', '/admin/addAdmin', '添加后台用户', '0', '0', null);
 INSERT INTO `permission` VALUES ('31', '1', '13', '/admin/getRoleList', '获取关联角色', '0', '0', null);
+INSERT INTO `permission` VALUES ('32', '4', '15', '/admin/articleComment', '获取文章评论', '0', '0', null);
+INSERT INTO `permission` VALUES ('33', '4', '15', '/admin/addComment', '添加文章评论', '0', '0', null);
+INSERT INTO `permission` VALUES ('34', '4', '15', '/admin/delComment', '删除文章评论', '0', '0', null);
 
 -- ----------------------------
 -- Table structure for `role`
@@ -219,7 +243,7 @@ CREATE TABLE `role_permission` (
   `rid` int DEFAULT NULL COMMENT '角色id',
   `pid` int DEFAULT NULL COMMENT '权限id',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=244 DEFAULT CHARSET=utf8mb3 AVG_ROW_LENGTH=442 ROW_FORMAT=DYNAMIC COMMENT='角色权限联结表';
+) ENGINE=InnoDB AUTO_INCREMENT=309 DEFAULT CHARSET=utf8mb3 AVG_ROW_LENGTH=442 ROW_FORMAT=DYNAMIC COMMENT='角色权限联结表';
 
 -- ----------------------------
 -- Records of role_permission
@@ -233,61 +257,89 @@ INSERT INTO `role_permission` VALUES ('124', '3', '7');
 INSERT INTO `role_permission` VALUES ('125', '3', '8');
 INSERT INTO `role_permission` VALUES ('126', '3', '17');
 INSERT INTO `role_permission` VALUES ('127', '3', '18');
-INSERT INTO `role_permission` VALUES ('133', '6', '16');
-INSERT INTO `role_permission` VALUES ('134', '6', '13');
-INSERT INTO `role_permission` VALUES ('135', '6', '1');
-INSERT INTO `role_permission` VALUES ('136', '6', '2');
-INSERT INTO `role_permission` VALUES ('137', '6', '3');
-INSERT INTO `role_permission` VALUES ('138', '6', '14');
-INSERT INTO `role_permission` VALUES ('139', '6', '4');
-INSERT INTO `role_permission` VALUES ('140', '6', '5');
-INSERT INTO `role_permission` VALUES ('141', '6', '6');
-INSERT INTO `role_permission` VALUES ('142', '6', '7');
-INSERT INTO `role_permission` VALUES ('143', '6', '8');
-INSERT INTO `role_permission` VALUES ('144', '6', '17');
-INSERT INTO `role_permission` VALUES ('145', '6', '18');
-INSERT INTO `role_permission` VALUES ('150', '4', '15');
-INSERT INTO `role_permission` VALUES ('151', '4', '9');
-INSERT INTO `role_permission` VALUES ('152', '4', '10');
-INSERT INTO `role_permission` VALUES ('153', '4', '11');
-INSERT INTO `role_permission` VALUES ('154', '4', '12');
-INSERT INTO `role_permission` VALUES ('207', '1', '15');
-INSERT INTO `role_permission` VALUES ('208', '1', '9');
-INSERT INTO `role_permission` VALUES ('209', '1', '10');
-INSERT INTO `role_permission` VALUES ('210', '1', '11');
-INSERT INTO `role_permission` VALUES ('211', '1', '12');
-INSERT INTO `role_permission` VALUES ('212', '1', '24');
-INSERT INTO `role_permission` VALUES ('213', '1', '16');
-INSERT INTO `role_permission` VALUES ('214', '1', '13');
-INSERT INTO `role_permission` VALUES ('215', '1', '1');
-INSERT INTO `role_permission` VALUES ('216', '1', '2');
-INSERT INTO `role_permission` VALUES ('217', '1', '3');
-INSERT INTO `role_permission` VALUES ('218', '1', '30');
-INSERT INTO `role_permission` VALUES ('219', '1', '31');
-INSERT INTO `role_permission` VALUES ('220', '1', '14');
-INSERT INTO `role_permission` VALUES ('221', '1', '4');
-INSERT INTO `role_permission` VALUES ('222', '1', '5');
-INSERT INTO `role_permission` VALUES ('223', '1', '6');
-INSERT INTO `role_permission` VALUES ('224', '1', '7');
-INSERT INTO `role_permission` VALUES ('225', '1', '8');
-INSERT INTO `role_permission` VALUES ('226', '1', '17');
-INSERT INTO `role_permission` VALUES ('227', '1', '18');
-INSERT INTO `role_permission` VALUES ('228', '1', '19');
-INSERT INTO `role_permission` VALUES ('229', '1', '20');
-INSERT INTO `role_permission` VALUES ('230', '1', '21');
-INSERT INTO `role_permission` VALUES ('231', '1', '22');
-INSERT INTO `role_permission` VALUES ('232', '1', '23');
-INSERT INTO `role_permission` VALUES ('233', '1', '25');
-INSERT INTO `role_permission` VALUES ('234', '1', '26');
-INSERT INTO `role_permission` VALUES ('235', '1', '27');
-INSERT INTO `role_permission` VALUES ('236', '1', '28');
-INSERT INTO `role_permission` VALUES ('237', '1', '29');
-INSERT INTO `role_permission` VALUES ('238', '2', '16');
-INSERT INTO `role_permission` VALUES ('239', '2', '13');
-INSERT INTO `role_permission` VALUES ('240', '2', '1');
-INSERT INTO `role_permission` VALUES ('241', '2', '2');
-INSERT INTO `role_permission` VALUES ('242', '2', '3');
-INSERT INTO `role_permission` VALUES ('243', '2', '30');
+INSERT INTO `role_permission` VALUES ('244', '1', '15');
+INSERT INTO `role_permission` VALUES ('245', '1', '9');
+INSERT INTO `role_permission` VALUES ('246', '1', '10');
+INSERT INTO `role_permission` VALUES ('247', '1', '11');
+INSERT INTO `role_permission` VALUES ('248', '1', '12');
+INSERT INTO `role_permission` VALUES ('249', '1', '24');
+INSERT INTO `role_permission` VALUES ('250', '1', '32');
+INSERT INTO `role_permission` VALUES ('251', '1', '33');
+INSERT INTO `role_permission` VALUES ('252', '1', '34');
+INSERT INTO `role_permission` VALUES ('253', '1', '16');
+INSERT INTO `role_permission` VALUES ('254', '1', '13');
+INSERT INTO `role_permission` VALUES ('255', '1', '1');
+INSERT INTO `role_permission` VALUES ('256', '1', '2');
+INSERT INTO `role_permission` VALUES ('257', '1', '3');
+INSERT INTO `role_permission` VALUES ('258', '1', '30');
+INSERT INTO `role_permission` VALUES ('259', '1', '31');
+INSERT INTO `role_permission` VALUES ('260', '1', '14');
+INSERT INTO `role_permission` VALUES ('261', '1', '4');
+INSERT INTO `role_permission` VALUES ('262', '1', '5');
+INSERT INTO `role_permission` VALUES ('263', '1', '6');
+INSERT INTO `role_permission` VALUES ('264', '1', '7');
+INSERT INTO `role_permission` VALUES ('265', '1', '8');
+INSERT INTO `role_permission` VALUES ('266', '1', '17');
+INSERT INTO `role_permission` VALUES ('267', '1', '18');
+INSERT INTO `role_permission` VALUES ('268', '1', '19');
+INSERT INTO `role_permission` VALUES ('269', '1', '20');
+INSERT INTO `role_permission` VALUES ('270', '1', '21');
+INSERT INTO `role_permission` VALUES ('271', '1', '22');
+INSERT INTO `role_permission` VALUES ('272', '1', '23');
+INSERT INTO `role_permission` VALUES ('273', '1', '25');
+INSERT INTO `role_permission` VALUES ('274', '1', '26');
+INSERT INTO `role_permission` VALUES ('275', '1', '27');
+INSERT INTO `role_permission` VALUES ('276', '1', '28');
+INSERT INTO `role_permission` VALUES ('277', '1', '29');
+INSERT INTO `role_permission` VALUES ('278', '4', '15');
+INSERT INTO `role_permission` VALUES ('279', '4', '9');
+INSERT INTO `role_permission` VALUES ('280', '4', '10');
+INSERT INTO `role_permission` VALUES ('281', '4', '11');
+INSERT INTO `role_permission` VALUES ('282', '4', '12');
+INSERT INTO `role_permission` VALUES ('283', '4', '24');
+INSERT INTO `role_permission` VALUES ('284', '4', '32');
+INSERT INTO `role_permission` VALUES ('285', '4', '33');
+INSERT INTO `role_permission` VALUES ('286', '4', '34');
+INSERT INTO `role_permission` VALUES ('287', '6', '16');
+INSERT INTO `role_permission` VALUES ('288', '6', '13');
+INSERT INTO `role_permission` VALUES ('289', '6', '1');
+INSERT INTO `role_permission` VALUES ('290', '6', '2');
+INSERT INTO `role_permission` VALUES ('291', '6', '3');
+INSERT INTO `role_permission` VALUES ('292', '6', '30');
+INSERT INTO `role_permission` VALUES ('293', '6', '31');
+INSERT INTO `role_permission` VALUES ('294', '6', '14');
+INSERT INTO `role_permission` VALUES ('295', '6', '4');
+INSERT INTO `role_permission` VALUES ('296', '6', '5');
+INSERT INTO `role_permission` VALUES ('297', '6', '6');
+INSERT INTO `role_permission` VALUES ('298', '6', '7');
+INSERT INTO `role_permission` VALUES ('299', '6', '8');
+INSERT INTO `role_permission` VALUES ('300', '6', '17');
+INSERT INTO `role_permission` VALUES ('301', '6', '18');
+INSERT INTO `role_permission` VALUES ('302', '2', '16');
+INSERT INTO `role_permission` VALUES ('303', '2', '13');
+INSERT INTO `role_permission` VALUES ('304', '2', '1');
+INSERT INTO `role_permission` VALUES ('305', '2', '2');
+INSERT INTO `role_permission` VALUES ('306', '2', '3');
+INSERT INTO `role_permission` VALUES ('307', '2', '30');
+INSERT INTO `role_permission` VALUES ('308', '2', '31');
+
+-- ----------------------------
+-- Table structure for `system_notice`
+-- ----------------------------
+DROP TABLE IF EXISTS `system_notice`;
+CREATE TABLE `system_notice` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `title` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
+  `content` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `receive_id` int NOT NULL,
+  `type` int NOT NULL,
+  `create_time` datetime NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- ----------------------------
+-- Records of system_notice
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for `tag`
@@ -368,3 +420,20 @@ INSERT INTO `user` VALUES ('2', 'lx', '$2a$10$mTRJP.YQ85/UW/xCDCTELeUh.1G0JpXMTs
 INSERT INTO `user` VALUES ('3', '123', '$2a$10$BqTeBoI5OXVgtSBfL0Iq9OzHprB02IC/NfrdY3Aie6QRYIYrY4q2u', null, '1', '2', '119.123.73.204', null, '2023-08-01 00:00:00', '2023-08-07 00:00:00');
 INSERT INTO `user` VALUES ('4', 'admin', '$2a$10$KDDW.HWgxY2cgz2gb0pz5Ou44YXD1PizT1AgtnOQqolh4MxhNsU9q', 'https://www.gqgwr.cn:3658/upload/f8a6e9ab7180d0ead9d2aa100.jpg', '1', '0', '113.87.128.170', null, '2023-08-01 00:00:00', '2023-08-01 00:00:00');
 INSERT INTO `user` VALUES ('12', '555', '$2a$10$N5NGgk70CR.vX3T3ZmYBWuIi/SofNuA8sJYXY4m1hf6Lsbx5TKlQu', null, '1', '123', '127.0.0.1', '123', '2023-09-05 11:16:05', '2023-09-05 11:16:05');
+
+-- ----------------------------
+-- Table structure for `user_notice`
+-- ----------------------------
+DROP TABLE IF EXISTS `user_notice`;
+CREATE TABLE `user_notice` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `status` tinyint(1) NOT NULL DEFAULT '0',
+  `type` varchar(60) COLLATE utf8mb4_general_ci NOT NULL,
+  `recipient_id` int NOT NULL,
+  `create_time` datetime NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- ----------------------------
+-- Records of user_notice
+-- ----------------------------
