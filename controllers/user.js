@@ -248,5 +248,17 @@ const register = async (ctx) => {
     }
     ctx.success('注册成功', result);
 }
+
+// 获取评论用户信息
+const getCommentUser = async (ctx) => {
+    const post = ctx.request.body;
+    const res = await UserModel.findAll({
+        attributes: ['username', 'avatar'],
+        where: {
+            status: 1
+        }
+    });
+    ctx.success({msg: '获取成功' , data: res});
+}
   
-module.exports = { userList,addUser,login,updateUser,deleteUser,updatePassword,register };
+module.exports = { userList,addUser,login,updateUser,deleteUser,updatePassword,register, getCommentUser };

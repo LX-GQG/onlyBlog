@@ -188,3 +188,22 @@
     socket: '<original node socket>'
   }
 }
+[2023-10-08T14:40:14.948] [ERROR] error - {
+  method: undefined,
+  url: undefined,
+  body: {},
+  user: {},
+  err: {
+    request: { method: 'POST', url: '/admin/updateComment', header: [Object] },
+    response: {
+      status: 404,
+      message: 'Not Found',
+      header: [Object: null prototype] {}
+    },
+    app: { subdomainOffset: 2, proxy: false, env: 'development' },
+    originalUrl: '/admin/updateComment',
+    req: '<original node req>',
+    res: '<original node res>',
+    socket: '<original node socket>'
+  }
+}

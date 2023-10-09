@@ -104,7 +104,12 @@ const routes = [
     {
         methods: "post",
         path: "/api/newComment",
-        controller: commentRouter.articleComment
+        controller: commentRouter.newComment
+    },
+    {
+        methods: "post",
+        path: "/api/thumbsUp",
+        controller: commentRouter.thumbsUp
     },
     // 首页
     {
@@ -277,6 +282,17 @@ const routes = [
         path: "/admin/delComment",
         controller: commentRouter.delComment,
         middleware: [checkPermission]
+    },
+    {
+        methods: "post",
+        path: "/admin/updateComment",
+        controller: commentRouter.updateComment,
+        middleware: [checkPermission]
+    },
+    {
+        methods: "post",
+        path: "/admin/getCommentUser",
+        controller: userRouter.getCommentUser,
     },
     // 标签
     {
