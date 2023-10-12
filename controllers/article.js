@@ -5,6 +5,7 @@ const UserModel = require('../models/user');
 const AdminModel = require('../models/admin');
 const TagArticleModel = require('../models/tag_article');
 const TagModel = require('../models/tag');
+const ThumbModel = require('../models/thumb');
 const { Op, fn, col } = require('sequelize');
 const { checkToken } = require('../utils/token');
 
@@ -14,6 +15,7 @@ ArticleModel.belongsToMany(TagModel, { through: 'tag_article', foreignKey: 'aid'
 // 一对多关联
 ArticleModel.belongsTo(AdminModel, { as: 'admin', foreignKey: 'admin_id', targetKey: 'id' });
 ArticleModel.belongsTo(UserModel, { as: 'user', foreignKey: 'user_id', targetKey: 'id' });
+ArticleModel.belongsTo(ThumbModel, { foreignKey: 'id', targetKey: 'aid' });
 
 // 后台添加文章
 const addArticle = async (ctx) => {
@@ -89,7 +91,12 @@ const articleList = async (ctx) => {
                 [
                     sequelize.literal('CASE WHEN user_id > 0 THEN "用户" ELSE "管理员" END'),
                     'type'
-                ]
+                ],
+                // 获取点赞数
+                [
+                    sequelize.literal(`(SELECT COUNT(*) FROM thumb WHERE aid = article.id) + thumbs_num`), 
+                    'real_thumbs_num'
+                ],
             ]
         },
         include: [
@@ -98,6 +105,10 @@ const articleList = async (ctx) => {
                 through: {
                     attributes: []
                 },
+            },
+            {
+                model: ThumbModel,
+                attributes: [],
             },
             {
                 model: AdminModel,
@@ -224,6 +235,14 @@ const newList = async (ctx) => {
     const pageNo = post.pageNo || 1;
     const pageSize = post.pageSize || 10;
     
+    // 获取用户id
+    let uid = 0;
+    if (ctx.header.authorization) {
+        const token = ctx.header.authorization.split(' ')[1];
+        const decoded = await checkToken(token);
+        uid = decoded.userinfo.id;
+    }
+
     let where = {};
     let relation_where = {};
 
@@ -250,10 +269,23 @@ const newList = async (ctx) => {
                     sequelize.literal('CASE WHEN user_id > 0 THEN "用户" ELSE "管理员" END'),
                     'type'
                 ],
-
+                // 获取点赞数
+                [
+                    sequelize.literal(`(SELECT COUNT(*) FROM thumb WHERE aid = article.id) + thumbs_num`), 
+                    'computed_thumbs_num'
+                ],
+                // 判断当前用户是否点赞
+                [
+                    sequelize.literal(`(SELECT COUNT(*) FROM thumb WHERE uid = ${uid} AND aid = article.id)`), 
+                    'is_thumb'
+                ],
             ]
         },
         include: [
+            {
+                model: ThumbModel,
+                attributes: []
+            },
             {
                 model: TagModel,
                 // 模糊查询
@@ -275,6 +307,7 @@ const newList = async (ctx) => {
                 required: false // 允许 user 为空
             },
         ],
+        // group: ['article.id'], // 根据文章ID分组
         order: [['create_time', 'DESC']],
         // 添加 distinct 选项,防止重复数据
         distinct: true,
@@ -293,6 +326,15 @@ const newList = async (ctx) => {
 // 前台获取文章详情
 const newDetail = async (ctx) => {
     const post = ctx.request.body;
+
+    // 获取用户id
+    let uid = 0;
+    if (ctx.header.authorization) {
+        const token = ctx.header.authorization.split(' ')[1];
+        const decoded = await checkToken(token);
+        uid = decoded.userinfo.id;
+    }
+
     if(!post.id) {
         ctx.fail({ code: 1001, msg: '参数不能为空' });
         return;
@@ -307,6 +349,10 @@ const newDetail = async (ctx) => {
                 through: {
                     attributes: []
                 }
+            },
+            {
+                model: ThumbModel,
+                attributes: [],
             },
             {
                 model: AdminModel,
@@ -328,7 +374,17 @@ const newDetail = async (ctx) => {
                 [
                     sequelize.literal('CASE WHEN user_id > 0 THEN user.username ELSE admin.username END'),
                     'author'
-                ]
+                ],
+                // 判断当前用户是否点赞
+                [
+                    sequelize.literal(`(SELECT COUNT(*) FROM thumb WHERE uid = ${uid} AND aid = article.id)`), 
+                    'is_thumb'
+                ],
+                // 获取点赞数
+                [
+                    sequelize.literal(`(SELECT COUNT(*) FROM thumb WHERE aid = article.id) + thumbs_num`), 
+                    'thumbs_num'
+                ],
             ]
         },
     });
@@ -380,7 +436,50 @@ const createArticle = async (ctx) => {
     }
 }
 
-// 
+// 给文章点赞
+const thumbArticle = async (ctx) => {
+    const post = ctx.request.body;
+    if(!post.aid) {
+        ctx.fail({ code: 1001, msg: '文章id不能为空' });
+        return;
+    }
+    // 获取用户id
+    const token = ctx.request.header.authorization;
+    let payload
+    if (token) {
+        payload = await checkToken(token.split(' ')[1]);  // 解密，获取payload
+    }
+    let uid = payload ? payload.userinfo.id : 0;
+
+    if (!uid) {
+        ctx.fail({ code: 401, msg: "未登录" });
+        return;
+    }
+    // 点赞过了则取消点赞，否则点赞
+    const res = await ThumbModel.findOne({
+        where: {
+            uid: uid,
+            aid: post.aid
+        }
+    });
+    if(res) {
+        await ThumbModel.destroy({
+            where: {
+                uid: uid,
+                aid: post.aid
+            }
+        });
+        ctx.success({ msg: '取消点赞' });
+    } else {
+        await ThumbModel.create({
+            uid: uid,
+            aid: post.aid,
+            cid: 0,
+            create_time: new Date(),
+        });
+        ctx.success({ msg: '点赞成功' });
+    }
+}
 
 module.exports = {
     addArticle,
@@ -390,5 +489,6 @@ module.exports = {
     deleteArticle,
     newList,
     newDetail,
-    createArticle
+    createArticle,
+    thumbArticle,
 }

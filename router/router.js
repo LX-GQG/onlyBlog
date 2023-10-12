@@ -111,6 +111,11 @@ const routes = [
         path: "/api/thumbsUp",
         controller: commentRouter.thumbsUp
     },
+    {
+        methods: "post",
+        path: "/api/thumbArticle",
+        controller: articleRouter.thumbArticle,
+    },
     // 首页
     {
         methods: "get",

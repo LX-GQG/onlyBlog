@@ -117,38 +117,45 @@ const thumbsUp = async (ctx) => {
         return;
     }
 
+    // 获取用户id
+    const token = ctx.request.header.authorization;
+    let payload
+    if (token) {
+        payload = await checkToken(token.split(' ')[1]);  // 解密，获取payload
+    }
+    let uid = payload ? payload.userinfo.id : 0;
+
+    if (!uid) {
+        ctx.fail({ code: 401, msg: "未登录" });
+        return;
+    }
+
     // 判断是否已经点赞
     const isThumb = await ThumbModel.findOne({
         where: {
             cid: post.id,
-            uid: post.uid,
+            uid: uid,
         }
     });
-    const res = null;
     if (isThumb) {
         // 已经点赞，取消点赞
-        res = await ThumbModel.destroy({
+        const res = await ThumbModel.destroy({
             where: {
                 cid: post.id,
-                uid: post.uid,
+                uid: uid,
             }
         });
-        return;
+        ctx.success({ msg: "取消点赞", data: res });
     } else {
         // 没有点赞，点赞
-        res = await ThumbModel.create({
+        const res = await ThumbModel.create({
             cid: post.id,
-            uid: post.uid,
+            uid: uid,
             aid: 0,
             create_time: new Date(),
         });
-    }
-    if (res) {
         ctx.success({ msg: "点赞成功", data: res });
-    } else {
-        ctx.fail({ msg: "点赞失败", data: res });
     }
-    
 }
 
 // 删除评论

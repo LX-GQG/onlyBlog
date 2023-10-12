@@ -43,6 +43,11 @@ const Article = sequelize.define('article', {
         allowNull: false,
         comment: '管理员id',
     },
+    thumbs_num: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        comment: '点赞数',
+    },
     create_time: {
         type: DataTypes.DATE,
         allowNull: false,
