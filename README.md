@@ -61,6 +61,7 @@ npm run dev 或者 yarn dev
 ```
 
 api接口文档地址：https://console-docs.apipost.cn/preview/6aabac7f4427a4ca/8a7c5e8c98f2b42a
+这里的接口可以使用 api.gqgwr.cn 直接调用
 
 本项目有权限控制，需登录，请求头上需要Authorization: Bearer + token才可以访问，Bearer和token需要用空格隔开。
 超级管理员拥有全部权限 
