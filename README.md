@@ -5,6 +5,8 @@
 
 Koa 框架做服务端 API 接口，只做了简单的基础，其余内容可以根据代码进行扩展
 
+访问地址 https://ad.gqgwr.cn 账号是lx 密码123456
+
 后台管理系统地址：https://github.com/LX-GQG/onlyBlogAdmin
 
 ## 1.1 项目功能
