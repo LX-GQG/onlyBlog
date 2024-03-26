@@ -81,6 +81,36 @@ const routes = [
     //     path: "/api/register",
     //     controller: userRouter.register
     // },
+    // 埋点数据
+    {
+        methods: "post",
+        path: "/api/detect",
+        controller: homeRouter.detect
+    },
+    {
+        methods: "post",
+        path: "/admin/detectList",
+        controller: homeRouter.detectList,
+        middleware: [checkPermission]
+    },
+    {
+        methods: "post",
+        path: "/admin/detectChart",
+        controller: homeRouter.detectChart,
+        middleware: [checkPermission]
+    },
+    // 抽奖
+    {
+        methods: "post",
+        path: "/api/lottery",
+        controller: homeRouter.lottery
+    },
+    {
+        methods: "post",
+        path: "/admin/lotteryList",
+        controller: homeRouter.lotteryList,
+        middleware: [checkPermission]
+    },
     {
         methods: "post",
         path: "/api/newList",
@@ -119,7 +149,7 @@ const routes = [
     // 首页
     {
         methods: "get",
-        path: "/admin/home",
+        path: "/api/test",
         controller: homeRouter.home
     },
     // 上传

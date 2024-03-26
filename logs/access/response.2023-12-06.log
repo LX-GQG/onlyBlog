@@ -1,0 +1,190 @@
+[2023-12-06T10:21:03.167] [INFO] response - {
+  ip: '::ffff:127.0.0.1',
+  method: 'POST',
+  url: '/admin/login',
+  body: { username: 'admin', password: '123456' },
+  user: undefined,
+  costTime: 171,
+  authorization: undefined,
+  response: { status: 200, message: 'OK' }
+}
+[2023-12-06T10:22:30.079] [INFO] response - {
+  ip: '::ffff:127.0.0.1',
+  method: 'POST',
+  url: '/admin/login',
+  body: { username: 'admin', password: '123456' },
+  user: undefined,
+  costTime: 1,
+  authorization: undefined,
+  response: { status: 404, message: 'Not Found' }
+}
+[2023-12-06T10:22:31.072] [INFO] response - {
+  ip: '::ffff:127.0.0.1',
+  method: 'POST',
+  url: '/admin/login',
+  body: { username: 'admin', password: '123456' },
+  user: undefined,
+  costTime: 0,
+  authorization: undefined,
+  response: { status: 404, message: 'Not Found' }
+}
+[2023-12-06T10:22:38.457] [INFO] response - {
+  ip: '::ffff:127.0.0.1',
+  method: 'POST',
+  url: '/admin/login',
+  body: { username: 'admin', password: '123456' },
+  user: undefined,
+  costTime: 154,
+  authorization: undefined,
+  response: { status: 200, message: 'OK' }
+}
+[2023-12-06T10:22:40.511] [INFO] response - {
+  ip: '::ffff:127.0.0.1',
+  method: 'POST',
+  url: '/admin/login',
+  body: { username: 'admin', password: '123456' },
+  user: undefined,
+  costTime: 98,
+  authorization: undefined,
+  response: { status: 200, message: 'OK' }
+}
+[2023-12-06T10:25:36.471] [INFO] response - {
+  ip: '::ffff:127.0.0.1',
+  method: 'POST',
+  url: '/api/newList',
+  body: { title: '', pageNo: 1, pageSize: 10 },
+  user: undefined,
+  costTime: 44,
+  authorization: undefined,
+  response: { status: 200, message: 'OK' }
+}
+[2023-12-06T10:26:00.592] [INFO] response - {
+  ip: '::ffff:127.0.0.1',
+  method: 'POST',
+  url: '/api/login',
+  body: { username: 'lx', password: '123456' },
+  user: undefined,
+  costTime: 120,
+  authorization: undefined,
+  response: { status: 200, message: 'OK' }
+}
+[2023-12-06T10:44:51.574] [INFO] response - {
+  ip: '::ffff:127.0.0.1',
+  method: 'GET',
+  url: '/api/test',
+  body: {},
+  user: undefined,
+  costTime: 2,
+  authorization: undefined,
+  response: { status: 200, message: 'OK' }
+}
+[2023-12-06T11:04:01.396] [INFO] response - {
+  ip: '::ffff:127.0.0.1',
+  method: 'GET',
+  url: '/api/test',
+  body: {},
+  user: undefined,
+  costTime: 5,
+  authorization: undefined,
+  response: { status: 200, message: 'OK' }
+}
+[2023-12-06T11:12:21.294] [INFO] response - {
+  ip: '::ffff:127.0.0.1',
+  method: 'GET',
+  url: '/api/test',
+  body: {},
+  user: undefined,
+  costTime: 1,
+  authorization: undefined,
+  response: { status: 404, message: 'Not Found' }
+}
+[2023-12-06T11:12:22.448] [INFO] response - {
+  ip: '::ffff:127.0.0.1',
+  method: 'GET',
+  url: '/api/test',
+  body: {},
+  user: undefined,
+  costTime: 0,
+  authorization: undefined,
+  response: { status: 404, message: 'Not Found' }
+}
+[2023-12-06T11:19:41.165] [INFO] response - {
+  ip: '::ffff:127.0.0.1',
+  method: 'GET',
+  url: '/api/test',
+  body: {},
+  user: undefined,
+  costTime: 0,
+  authorization: undefined,
+  response: { status: 404, message: 'Not Found' }
+}
+[2023-12-06T11:23:06.499] [INFO] response - {
+  ip: '::ffff:127.0.0.1',
+  method: 'GET',
+  url: '/api/test',
+  body: {},
+  user: undefined,
+  costTime: 2,
+  authorization: undefined,
+  response: { status: 200, message: 'OK' }
+}
+[2023-12-06T11:23:07.512] [INFO] response - {
+  ip: '::ffff:127.0.0.1',
+  method: 'GET',
+  url: '/api/test',
+  body: {},
+  user: undefined,
+  costTime: 2,
+  authorization: undefined,
+  response: { status: 200, message: 'OK' }
+}
+[2023-12-06T11:24:39.779] [INFO] response - {
+  ip: '::ffff:127.0.0.1',
+  method: 'GET',
+  url: '/api/test',
+  body: {},
+  user: undefined,
+  costTime: 1,
+  authorization: undefined,
+  response: { status: 404, message: 'Not Found' }
+}
+[2023-12-06T11:25:39.971] [INFO] response - {
+  ip: '::ffff:127.0.0.1',
+  method: 'GET',
+  url: '/api/test',
+  body: {},
+  user: undefined,
+  costTime: 2,
+  authorization: undefined,
+  response: { status: 200, message: 'OK' }
+}
+[2023-12-06T11:25:41.677] [INFO] response - {
+  ip: '::ffff:127.0.0.1',
+  method: 'GET',
+  url: '/api/test',
+  body: {},
+  user: undefined,
+  costTime: 2,
+  authorization: undefined,
+  response: { status: 200, message: 'OK' }
+}
+[2023-12-06T11:26:04.902] [INFO] response - {
+  ip: '::ffff:127.0.0.1',
+  method: 'GET',
+  url: '/api/test',
+  body: {},
+  user: undefined,
+  costTime: 2,
+  authorization: undefined,
+  response: { status: 200, message: 'OK' }
+}
+[2023-12-06T11:28:54.445] [INFO] response - {
+  ip: '::ffff:127.0.0.1',
+  method: 'GET',
+  url: '/api/test',
+  body: {},
+  user: undefined,
+  costTime: 4,
+  authorization: undefined,
+  response: { status: 200, message: 'OK' }
+}
