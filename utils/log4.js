@@ -41,7 +41,7 @@ let logger = {}
 const formatError = (ctx, err) => {
     const { method, url } = ctx
     // body可能不存在, request.body可能不存在
-    const body = ctx?.request?.body || {}
+    const body = JSON.parse(JSON.stringify(ctx?.request?.body || {}))
     const user = ctx?.state?.user || {}
     // 将请求方法，请求路径，请求体，登录用户，错误信息
     return { method, url, body, user, err }
@@ -51,8 +51,8 @@ const formatError = (ctx, err) => {
 const formatRes = (ctx, costTime) => {
     // const { method, url, response: { status, message, body: { success } }, request: { header: { authorization } } } = ctx
     const { ip, method, url, response: { status, message }, request: { header: { authorization } } } = ctx
-    const body = ctx.request.body
-    const user = ctx.state.user
+    const body = JSON.parse(JSON.stringify(ctx?.request?.body || {}))
+    const user = ctx?.state?.user || {}
     // 将请求方法，请求路径，请求体，登录用户，请求消耗时间，请求头中的authorization字段即token，响应体中的状态码，消息，以及自定义的响应状态
     return { ip, method, url, body, user, costTime, authorization, response: { status, message } }
 }

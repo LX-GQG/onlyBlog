@@ -41,14 +41,13 @@ if (cluster.isMaster) {
     const { log, errLogger, resLogger } = require('./utils/log4');
 
     const app = new Koa();
-    const redis = new Redis();
 
     // 设置限流中间件，每分钟最多允许10个请求
     app.use(ratelimit({
-        duration: 60000, // 1分钟
+        driver: "memory",
         db: new Map(),
         duration: 60000, // 限流时间窗口（毫秒）
-        max: 10, // 最多10个请求
+        max: 100, // 最多10个请求
     }));
 
     // 端口号
@@ -112,12 +111,10 @@ if (cluster.isMaster) {
         const end = new Date() - start;
 
         resLogger(ctx, end);
-        // console.log(`${ctx.method} ${ctx.url} - ${end}ms`);
     })
 
     app.on('error', (err, ctx) => {
         errLogger(err, ctx);
-        console.log(err);
     })
 
     app.use(router.routes(),router.allowedMethods());
