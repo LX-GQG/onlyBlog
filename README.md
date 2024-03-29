@@ -1,7 +1,7 @@
 # onlyBolg
-基于koa和sequelize 开发的result api 后台 ，使用bcryptjs对密码进行加密，并进行了权限控制，分配权限，根据权限进行路由拦截。
+使用node.js技术，基于koa和sequelize开发的result api后台 ，使用bcryptjs对密码进行加密，并进行了权限控制，分配权限，根据权限进行路由拦截。
 
-使用sequelize对数据库进行操作，jwt对token进行封装，log4js进行日志监控，https访问，文件上传，跨域
+使用sequelize对数据库进行操作，jwt对token进行封装，log4js进行日志监控，https访问，文件上传，跨域，使用pm2进行进程守护，docker部署，使用cluster集群提高服务器效率，使用限流中间件，提高并发处理能力。
 
 Koa 框架做服务端 API 接口，只做了简单的基础，其余内容可以根据代码进行扩展
 
@@ -16,6 +16,9 @@ Koa 框架做服务端 API 接口，只做了简单的基础，其余内容可�
 - 权限管理
     - 用户管理
     - 用户组管理
+- 埋点统计 （是我个人网站的埋点数据，可以查看我网站的访问量，访问人数，访问设备，访问地区，访问来源，访问页面等）
+  - 埋点数据
+  - 埋点图表
 
 ## 1.2 项目结构
 ```
@@ -45,6 +48,7 @@ Koa 框架做服务端 API 接口，只做了简单的基础，其余内容可�
 |   ├─db.js (连接数据库)
 |   ├─dbContent.js (封装数据库方法)
 |   └─secret.js (密钥)
+├─Dockerfile.js (docker部署文件)
 ```
 
 ## 1.4 启动项目
@@ -62,6 +66,21 @@ npm install 或者 yarn install
 npm run dev 或者 yarn dev
 ```
 
+## 1.5 使用Docker部署
+```
+# 进入项目根目录
+
+cd onlyBlog
+# 构建镜像
+docker build -t onlyblog .
+# 启动容器
+
+docker run -d -p 3658:3658 onlyblog
+
+# 确认是否成功
+docker ps -a
+```
+
 api接口文档地址：https://console-docs.apipost.cn/preview/6aabac7f4427a4ca/8a7c5e8c98f2b42a
 这里的接口可以使用 api.gqgwr.cn 直接调用
 
@@ -72,6 +91,6 @@ api接口文档地址：https://console-docs.apipost.cn/preview/6aabac7f4427a4ca
 
 端口号设置在根目录下的app.js文件中
 默认端口为3658，
-即可通过 https://localhost:3658/admin/xxx 调用后台接口
+即可通过 https://localhost:3658/admin/xxx 调用后台接口(需要token，以及根据token的权限)
 https://localhost:3658/api/xxx 调用前台接口(目前只有登录接口，文章接口，后续会继续完善)
 
