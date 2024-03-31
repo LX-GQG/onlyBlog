@@ -58,6 +58,38 @@ const Article = sequelize.define('article', {
         allowNull: false,
         comment: '更新时间',
     },
+}, {
+    associations: {
+        user: {
+            type: DataTypes.BELONGS_TO,
+            model: 'user',
+            foreignKey: 'user_id',
+        },
+        admin: {
+            type: DataTypes.BELONGS_TO,
+            model: 'admin',
+            foreignKey: 'admin_id',
+        }
+    },
+}, {
+    // 定义模型的索引
+    indexes: [
+        // 添加一个针对 title 字段的索引
+        {
+            name: 'idx_article_title',
+            fields: ['title']
+        },
+        // 添加一个联合索引
+        {
+            name: 'idx_article_user_status',
+            fields: ['user_id', 'thumbs_num']
+        },
+        // 添加一个联合索引
+        {
+            name: 'idx_article_admin_status',
+            fields: ['admin_id', 'thumbs_num']
+        }
+    ]
 });
 
 module.exports = Article;

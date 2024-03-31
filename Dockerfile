@@ -1,4 +1,4 @@
-# 基础镜像为node，版本为v9.2.0
+# 基础镜像为node
 FROM node
 
 # 创建容器内的项目存放目录
@@ -6,7 +6,7 @@ RUN mkdir -p /home/nodeapp
 WORKDIR /home/nodeapp
 
 #  将Dockerfile当前目录下所有文件拷贝至容器内项目目录并安装项目依赖
-COPY . /home/Service
+COPY . /home/nodeapp
 RUN npm install --registry=https://registry.npm.taobao.org
 
 # 容器对外暴露的端口号，要和node项目配置的端口号一致

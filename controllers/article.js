@@ -254,43 +254,33 @@ const deleteArticle = async (ctx) => {
 
 // 前台获取文章列表
 const newList = async (ctx) => {
-    const post = ctx.request.body;
-    const pageNo = post.pageNo || 1;
-    const pageSize = post.pageSize || 10;
-    
-    // 获取用户id
-    let uid = 0;
-    if (ctx.header.authorization) {
-        const token = ctx.header.authorization.split(' ')[1];
-        const decoded = await checkToken(token);
-        uid = decoded.userinfo.id;
-    }
-
-    let where = {};
-    let relation_where = {};
-
-    if (post.tag_name) {
-        relation_where.name = {
-            [Op.like]: `%${post.tag_name}%`
-        }
-    }
-
-    where.status = 1
-    if (post.title) {
-        where.title = {
-            [Op.like]: `%${post.title}%`
-        }
-    }
-
-    // 构建 redis 缓存键名
-    const redisKey = `newsList_${pageNo}_${pageSize}_${JSON.stringify(where)}`; 
-    
     try {
-        // 先从 redis 获取数据
+        const post = ctx.request.body;
+        const pageNo = post.pageNo || 1;
+        const pageSize = post.pageSize || 10;
+
+        // 获取用户id
+        let uid = 0;
+        if (ctx.header.authorization) {
+            const token = ctx.header.authorization.split(' ')[1];
+            const decoded = await checkToken(token);
+            uid = decoded.userinfo.id;
+        }
+
+        const redisKey = `newsList_${pageNo}_${pageSize}_${JSON.stringify(post)}`;
+
+        // 先从 Redis 获取数据
         const redisData = await redis.get(redisKey);
         if (redisData) {
             ctx.success({ msg: '获取成功', data: JSON.parse(redisData) });
             return;
+        }
+
+        const where = {
+            status: 1
+        };
+        if (post.title) {
+            where.title = { [Op.like]: `%${post.title}%` };
         }
 
         const res = await ArticleModel.findAndCountAll({
@@ -300,20 +290,9 @@ const newList = async (ctx) => {
             attributes: { 
                 // exclude: ['admin_id'],
                 include: [
-                    [
-                        sequelize.literal('CASE WHEN user_id > 0 THEN "用户" ELSE "管理员" END'),
-                        'type'
-                    ],
-                    // 获取点赞数
-                    [
-                        sequelize.literal(`(SELECT COUNT(*) FROM thumb WHERE aid = article.id) + thumbs_num`), 
-                        'computed_thumbs_num'
-                    ],
-                    // 判断当前用户是否点赞
-                    [
-                        sequelize.literal(`(SELECT COUNT(*) FROM thumb WHERE uid = ${uid} AND aid = article.id)`), 
-                        'is_thumb'
-                    ],
+                    [sequelize.literal('CASE WHEN user_id > 0 THEN "用户" ELSE "管理员" END'), 'type'],
+                    [sequelize.literal(`(SELECT COUNT(*) FROM thumb WHERE aid = article.id) + thumbs_num`), 'computed_thumbs_num'],
+                    [sequelize.literal(`(SELECT COUNT(*) FROM thumb WHERE uid = ${uid} AND aid = article.id)`), 'is_thumb'],
                 ]
             },
             include: [
@@ -323,11 +302,8 @@ const newList = async (ctx) => {
                 },
                 {
                     model: TagModel,
-                    // 模糊查询
-                    relation_where,
-                    through: {
-                        attributes: []
-                    }
+                    through: { attributes: [] },
+                    where: post.tag_name ? { name: { [Op.like]: `%${post.tag_name}%` } } : {}
                 },
                 {
                     model: AdminModel,
@@ -339,29 +315,25 @@ const newList = async (ctx) => {
                     model: UserModel,
                     as: 'user',
                     attributes: ['username'],
-                    required: false // 允许 user 为空
+                    required: false
                 },
             ],
-            // group: ['article.id'], // 根据文章ID分组
             order: [['create_time', 'DESC']],
-            // 添加 distinct 选项,防止重复数据
             distinct: true,
-        })
-        // 处理user_id>0,因为user和admin可能为空
-        res.rows.forEach(item => {
-            if (item.dataValues.user_id > 0 && item.dataValues.user) {
-                item.dataValues.author = item.dataValues.user.dataValues.username
-            } else if (item.dataValues.user_id == 0 && item.dataValues.admin) {
-                item.dataValues.author = item.dataValues.admin.dataValues.username
-            }
         });
+
+        // 处理作者信息
+        res.rows.forEach(item => {
+            item.dataValues.author = item.dataValues.user_id > 0 ? item.dataValues.user?.username : item.dataValues.admin?.username;
+        });
+
+        // 将查询结果存入 Redis 缓存
         await redis.setex(redisKey, 3600, JSON.stringify(res));
 
         ctx.success({ msg: "查询成功", data: res });
     } catch (e) {
         ctx.fail({ msg: "查询失败", data: e });
     }
-    
 }
 
 // 前台获取文章详情
