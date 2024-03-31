@@ -1,4 +1,4 @@
-# onlyBolg
+# onlyBlog
 使用node.js技术，基于koa和sequelize开发的result api后台 ，使用bcryptjs对密码进行加密，并进行了权限控制，分配权限，根据权限进行路由拦截。
 
 使用sequelize对数据库进行操作，jwt对token进行封装，log4js进行日志监控，https访问，文件上传，跨域，使用pm2进行进程守护，docker部署，使用cluster集群提高服务器效率，使用限流中间件，提高并发处理能力。

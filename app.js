@@ -13,7 +13,6 @@ if (cluster.isMaster) {
 } else {
     const Koa = require("koa");
     const ratelimit = require("koa-ratelimit");
-    const Redis = require("ioredis");
     const compose = require("koa-compose");
     const koaStatic = require("koa-static");
     const checkTokenMiddleware = require("./utils/auth").checkTokenMiddleware;

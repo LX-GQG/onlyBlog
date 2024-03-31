@@ -8,6 +8,7 @@ const TagModel = require('../models/tag');
 const ThumbModel = require('../models/thumb');
 const { Op, fn, col } = require('sequelize');
 const { checkToken } = require('../utils/token');
+const redisClient = require('../config/redis');
 
 // thorough表查询
 // 关联多个表，可能会出现第二次调用失败，关联的定义放在模型的定义之外，通常是在文件顶部，以确保关联只被定义一次
@@ -16,6 +17,9 @@ ArticleModel.belongsToMany(TagModel, { through: 'tag_article', foreignKey: 'aid'
 ArticleModel.belongsTo(AdminModel, { as: 'admin', foreignKey: 'admin_id', targetKey: 'id' });
 ArticleModel.belongsTo(UserModel, { as: 'user', foreignKey: 'user_id', targetKey: 'id' });
 ArticleModel.belongsTo(ThumbModel, { foreignKey: 'id', targetKey: 'aid' });
+
+// redis实例
+const redis = redisClient();
 
 // 后台添加文章
 const addArticle = async (ctx) => {
@@ -85,70 +89,89 @@ const articleList = async (ctx) => {
     if (post.admin_id) {
         where.admin_id = post.admin_id;
     }
-    const res = await ArticleModel.findAndCountAll({
-        attributes: {
-            include: [
-                [
-                    sequelize.literal('CASE WHEN user_id > 0 THEN "用户" ELSE "管理员" END'),
-                    'type'
-                ],
-                // 获取点赞数
-                [
-                    sequelize.literal(`(SELECT COUNT(*) FROM thumb WHERE aid = article.id) + thumbs_num`), 
-                    'real_thumbs_num'
-                ],
-            ]
-        },
-        include: [
-            {
-                model: TagModel,
-                through: {
-                    attributes: []
-                },
-            },
-            {
-                model: ThumbModel,
-                attributes: [],
-            },
-            {
-                model: AdminModel,
-                as: 'admin',
-                attributes: ['username'],
-                required: false,
-            },
-            {
-                model: UserModel,
-                as: 'user',
-                attributes: ['username'],
-                required: false,
-            },
-        ],
-        where: where,
-        offset: (pageNo - 1) * pageSize,
-        limit: pageSize,
-        order: [['create_time', 'DESC']],
-        // 添加 distinct 选项,防止重复数据
-        distinct: true,
-    });
-    // 处理user_id>0,因为user和admin可能为空
-    res.rows.forEach(item => {
-        if (item.dataValues.user_id > 0 && item.dataValues.user) {
-            let author = item.dataValues.user.dataValues.username
-            item.dataValues.author = author        
-        } else if (item.dataValues.user_id == 0 && item.dataValues.admin){
-            let author = item.dataValues.admin.dataValues.username
-            item.dataValues.author = author 
+
+    // 构建 redis 缓存键名
+    const redisKey = `articleList_${pageNo}_${pageSize}_${JSON.stringify(where)}`;
+
+    try {
+        // 从redis获取数据
+        const redisData = await redis.get(redisKey);
+        if (redisData) {
+            ctx.success({ msg: "查询成功", data: JSON.parse(redisData) });
+            return;
         }
-    });
-    // 根据文章author字段进行模糊查询
-    if (post.author) {
-        const author = post.author;
-        const res2 = res.rows.filter(item => {
-            return item.dataValues.author.indexOf(author) > -1;
+        // 缓存不存在，则查询数据库
+        const res = await ArticleModel.findAndCountAll({
+            attributes: {
+                include: [
+                    [
+                        sequelize.literal('CASE WHEN user_id > 0 THEN "用户" ELSE "管理员" END'),
+                        'type'
+                    ],
+                    // 获取点赞数
+                    [
+                        sequelize.literal(`(SELECT COUNT(*) FROM thumb WHERE aid = article.id) + thumbs_num`), 
+                        'real_thumbs_num'
+                    ],
+                ]
+            },
+            include: [
+                {
+                    model: TagModel,
+                    through: {
+                        attributes: []
+                    },
+                },
+                {
+                    model: ThumbModel,
+                    attributes: [],
+                },
+                {
+                    model: AdminModel,
+                    as: 'admin',
+                    attributes: ['username'],
+                    required: false,
+                },
+                {
+                    model: UserModel,
+                    as: 'user',
+                    attributes: ['username'],
+                    required: false,
+                },
+            ],
+            where: where,
+            offset: (pageNo - 1) * pageSize,
+            limit: pageSize,
+            order: [['create_time', 'DESC']],
+            // 添加 distinct 选项,防止重复数据
+            distinct: true,
         });
-        res.rows = res2;
+        // 处理user_id>0,因为user和admin可能为空
+        res.rows.forEach(item => {
+            if (item.dataValues.user_id > 0 && item.dataValues.user) {
+                let author = item.dataValues.user.dataValues.username
+                item.dataValues.author = author        
+            } else if (item.dataValues.user_id == 0 && item.dataValues.admin){
+                let author = item.dataValues.admin.dataValues.username
+                item.dataValues.author = author 
+            }
+        });
+        // 根据文章author字段进行模糊查询
+        if (post.author) {
+            const author = post.author;
+            const res2 = res.rows.filter(item => {
+                return item.dataValues.author.indexOf(author) > -1;
+            });
+            res.rows = res2;
+        }
+        // 将缓存数据存储到redis
+        await redis.setex(redisKey, 3600, JSON.stringify(res));
+        ctx.success({ msg: "查询成功", data: res });
+    } catch (err) {
+        console.log(err);
+        ctx.fail({ code: 500, msg: '查询失败' });
     }
-    ctx.success({ msg: "查询成功", data: res });
+    
 }
 
 // 获取指定用户的文章列表
@@ -258,69 +281,87 @@ const newList = async (ctx) => {
             [Op.like]: `%${post.title}%`
         }
     }
-    const res = await ArticleModel.findAndCountAll({
-        offset: (pageNo - 1) * pageSize,
-        limit: pageSize,
-        where,
-        attributes: { 
-            // exclude: ['admin_id'],
-            include: [
-                [
-                    sequelize.literal('CASE WHEN user_id > 0 THEN "用户" ELSE "管理员" END'),
-                    'type'
-                ],
-                // 获取点赞数
-                [
-                    sequelize.literal(`(SELECT COUNT(*) FROM thumb WHERE aid = article.id) + thumbs_num`), 
-                    'computed_thumbs_num'
-                ],
-                // 判断当前用户是否点赞
-                [
-                    sequelize.literal(`(SELECT COUNT(*) FROM thumb WHERE uid = ${uid} AND aid = article.id)`), 
-                    'is_thumb'
-                ],
-            ]
-        },
-        include: [
-            {
-                model: ThumbModel,
-                attributes: []
-            },
-            {
-                model: TagModel,
-                // 模糊查询
-                relation_where,
-                through: {
-                    attributes: []
-                }
-            },
-            {
-                model: AdminModel,
-                as: 'admin',
-                attributes: ['username'],
-                required: false
-            },
-            {
-                model: UserModel,
-                as: 'user',
-                attributes: ['username'],
-                required: false // 允许 user 为空
-            },
-        ],
-        // group: ['article.id'], // 根据文章ID分组
-        order: [['create_time', 'DESC']],
-        // 添加 distinct 选项,防止重复数据
-        distinct: true,
-    })
-    // 处理user_id>0,因为user和admin可能为空
-    res.rows.forEach(item => {
-        if (item.dataValues.user_id > 0 && item.dataValues.user) {
-            item.dataValues.author = item.dataValues.user.dataValues.username
-        } else if (item.dataValues.user_id == 0 && item.dataValues.admin) {
-            item.dataValues.author = item.dataValues.admin.dataValues.username
+
+    // 构建 redis 缓存键名
+    const redisKey = `newsList_${pageNo}_${pageSize}_${JSON.stringify(where)}`; 
+    
+    try {
+        // 先从 redis 获取数据
+        const redisData = await redis.get(redisKey);
+        if (redisData) {
+            ctx.success({ msg: '获取成功', data: JSON.parse(redisData) });
+            return;
         }
-    });
-    ctx.success({ msg: "查询成功", data: res });
+
+        const res = await ArticleModel.findAndCountAll({
+            offset: (pageNo - 1) * pageSize,
+            limit: pageSize,
+            where,
+            attributes: { 
+                // exclude: ['admin_id'],
+                include: [
+                    [
+                        sequelize.literal('CASE WHEN user_id > 0 THEN "用户" ELSE "管理员" END'),
+                        'type'
+                    ],
+                    // 获取点赞数
+                    [
+                        sequelize.literal(`(SELECT COUNT(*) FROM thumb WHERE aid = article.id) + thumbs_num`), 
+                        'computed_thumbs_num'
+                    ],
+                    // 判断当前用户是否点赞
+                    [
+                        sequelize.literal(`(SELECT COUNT(*) FROM thumb WHERE uid = ${uid} AND aid = article.id)`), 
+                        'is_thumb'
+                    ],
+                ]
+            },
+            include: [
+                {
+                    model: ThumbModel,
+                    attributes: []
+                },
+                {
+                    model: TagModel,
+                    // 模糊查询
+                    relation_where,
+                    through: {
+                        attributes: []
+                    }
+                },
+                {
+                    model: AdminModel,
+                    as: 'admin',
+                    attributes: ['username'],
+                    required: false
+                },
+                {
+                    model: UserModel,
+                    as: 'user',
+                    attributes: ['username'],
+                    required: false // 允许 user 为空
+                },
+            ],
+            // group: ['article.id'], // 根据文章ID分组
+            order: [['create_time', 'DESC']],
+            // 添加 distinct 选项,防止重复数据
+            distinct: true,
+        })
+        // 处理user_id>0,因为user和admin可能为空
+        res.rows.forEach(item => {
+            if (item.dataValues.user_id > 0 && item.dataValues.user) {
+                item.dataValues.author = item.dataValues.user.dataValues.username
+            } else if (item.dataValues.user_id == 0 && item.dataValues.admin) {
+                item.dataValues.author = item.dataValues.admin.dataValues.username
+            }
+        });
+        await redis.setex(redisKey, 3600, JSON.stringify(res));
+
+        ctx.success({ msg: "查询成功", data: res });
+    } catch (e) {
+        ctx.fail({ msg: "查询失败", data: e });
+    }
+    
 }
 
 // 前台获取文章详情
