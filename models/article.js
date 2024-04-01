@@ -74,6 +74,11 @@ const Article = sequelize.define('article', {
 }, {
     // 定义模型的索引
     indexes: [
+        // 针对id字段的索引
+        {
+            name: 'idx_article_id',
+            fields: ['id']
+        },
         // 添加一个针对 title 字段的索引
         {
             name: 'idx_article_title',

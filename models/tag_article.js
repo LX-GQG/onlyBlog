@@ -26,6 +26,14 @@ const TagArticle = sequelize.define('tag_article', {
     //paranoid: true,
     freezeTableName: true, // 为 true 则表的名称和 model 相同
     charset: 'utf8'
+}, {
+    // 定义模型的索引
+    indexes: [
+        // 针对id字段的索引
+        { fields: ['id'] },
+        // 联合索引
+        { fields: ['tid', 'aid'] },        
+    ]
 })
 
 

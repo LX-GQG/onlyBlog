@@ -4,10 +4,10 @@ const Redis = require('ioredis');
 function createRedis() {
     // Redis 实例
     const redisClient = new Redis({
-        host: '000.000.000.000',
+        host: '120.76.205.83',
         port: 6379,
-        password: '000',
-        connectTimeout: 10000, // 连接超时时间
+        password: 'lx973156',
+        connectTimeout: 5000, // 连接超时时间
         lazyConnect: true, // 延迟连接
     });
     return redisClient;

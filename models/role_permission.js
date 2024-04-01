@@ -26,6 +26,11 @@ const RolesPermissions = sequelize.define('role_permission', {
     //paranoid: true,
     freezeTableName: true, // 为 true 则表的名称和 model 相同
     charset: 'utf8'
+},{
+    // 定义模型的索引
+    indexes: [
+        { unique: true, fields: ['rid', 'pid'] }
+    ]
 })
 
 

@@ -267,6 +267,7 @@ const newList = async (ctx) => {
             uid = decoded.userinfo.id;
         }
 
+        // redis 键名
         const redisKey = `newsList_${pageNo}_${pageSize}_${JSON.stringify(post)}`;
 
         // 先从 Redis 获取数据
@@ -298,7 +299,7 @@ const newList = async (ctx) => {
             include: [
                 {
                     model: ThumbModel,
-                    attributes: []
+                    attributes: [],                    
                 },
                 {
                     model: TagModel,

@@ -47,6 +47,11 @@ const detect = async (ctx) => {
         for (let i = 0; i < barch.length; i++) {
             const ip = getClientIP(ctx);
             barch[i].ip = ip;
+            // target 可能会过长
+            const MAX_LENGTH = 255
+            if (barch[i].length > MAX_LENGTH) {
+                barch[i].target = barch[i].target.substring(0, MAX_LENGTH) + '...'
+            }
             result = await DetectModel.create(barch[i])
         }
         if(result) {

@@ -30,6 +30,16 @@ const Thumb = sequelize.define('thumb', {
         allowNull: false,
         comment: '创建时间',
     },
+},{
+    // 定义模型的索引
+    indexes: [
+        // 针对id字段的索引
+        { unique: true, fields: ['id'] },
+        // 针对uid和aid字段的组合索引
+        { unique: false, fields: ['uid', 'aid'] },
+        // 针对cid字段的索引
+        { unique: false, fields: ['cid'] },
+    ]
 })
 
 
